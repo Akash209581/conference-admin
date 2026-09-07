@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Save, CheckCircle2, AlertCircle, Globe2, Search } from "lucide-react";
@@ -34,7 +34,7 @@ export function SeoForm({ conferenceId, slug, initialData }: SeoFormProps) {
     setStatus("idle");
 
     try {
-      const res = await fetch(`/api/admin/seo`, {
+      const res = await fetch(`/conference-admin/api/admin/seo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, seo: formData })

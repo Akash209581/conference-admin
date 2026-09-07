@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -73,7 +73,7 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
       data.append("file", file);
       data.append("folder", "speakers");
 
-      const res = await fetch("/api/admin/upload", {
+      const res = await fetch("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
@@ -105,7 +105,7 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
     setStatus("idle");
 
     try {
-      const res = await fetch("/api/admin/speakers", {
+      const res = await fetch("/conference-admin/api/admin/speakers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -142,7 +142,7 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
     if (!confirm("Are you sure you want to delete this speaker?")) return;
 
     try {
-      const res = await fetch(`/api/admin/speakers?id=${speakerId}`, {
+      const res = await fetch(`/conference-admin/api/admin/speakers?id=${speakerId}`, {
         method: "DELETE"
       });
 

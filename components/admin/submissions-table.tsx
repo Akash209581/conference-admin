@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Search, Download, FileText, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
@@ -41,7 +41,7 @@ export function SubmissionsTable({ submissions: initialData, conferenceSlug }: S
   const handleStatusChange = async (submissionId: string, newStatus: string) => {
     setUpdatingId(submissionId);
     try {
-      const res = await fetch(`/api/admin/submissions/status`, {
+      const res = await fetch(`/conference-admin/api/admin/submissions/status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ submissionId, status: newStatus })

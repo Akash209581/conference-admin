@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -199,7 +199,7 @@ export function ContentForm({
       data.append("file", file);
       data.append("folder", "hero");
 
-      const res = await fetch("/api/admin/upload", {
+      const res = await fetch("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
@@ -243,7 +243,7 @@ export function ContentForm({
       data.append("conferenceId", conferenceId);
       data.append("category", "branding");
 
-      const res = await fetch("/api/admin/upload", {
+      const res = await fetch("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
@@ -271,7 +271,7 @@ export function ContentForm({
       data.append("file", file);
       data.append("folder", "speakers");
 
-      const res = await fetch("/api/admin/upload", {
+      const res = await fetch("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
@@ -300,7 +300,7 @@ export function ContentForm({
     if (!editingSpeaker) return;
 
     try {
-      const res = await fetch("/api/admin/speakers", {
+      const res = await fetch("/conference-admin/api/admin/speakers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -335,7 +335,7 @@ export function ContentForm({
     if (!confirm("Are you sure you want to delete this speaker?")) return;
 
     try {
-      const res = await fetch(`/api/admin/speakers?id=${speakerId}`, {
+      const res = await fetch(`/conference-admin/api/admin/speakers?id=${speakerId}`, {
         method: "DELETE"
       });
 
@@ -409,7 +409,7 @@ export function ContentForm({
     setStatus("idle");
 
     try {
-      const res = await fetch(`/api/admin/content`, {
+      const res = await fetch(`/conference-admin/api/admin/content`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, sections, footer: footerData })

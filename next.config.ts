@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  basePath: "/conference-admin",
   reactStrictMode: true,
-  devIndicators: false,
   images: {
     remotePatterns: [
       {

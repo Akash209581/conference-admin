@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -43,7 +43,7 @@ export default function NewConferencePage() {
     setError("");
 
     try {
-      const res = await fetch(`/api/admin/conferences`, {
+      const res = await fetch(`/conference-admin/api/admin/conferences`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)

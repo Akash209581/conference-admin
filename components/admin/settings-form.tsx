@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Save, CheckCircle2, AlertCircle, Building2, MapPin, Calendar, Globe } from "lucide-react";
@@ -38,7 +38,7 @@ export function SettingsForm({ conferenceId, slug, initialData }: SettingsFormPr
     setStatus("idle");
 
     try {
-      const res = await fetch(`/api/admin/settings`, {
+      const res = await fetch(`/conference-admin/api/admin/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, data: formData })

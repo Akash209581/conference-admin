@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Save, CheckCircle2, AlertCircle, Image as ImageIcon, Upload, Loader2, Palette, } from "lucide-react";
@@ -41,7 +41,7 @@ export function MediaForm({ conferenceId, slug, initialMedia }: MediaFormProps) 
       data.append("file", file);
       data.append("folder", folder);
 
-      const res = await fetch("/api/admin/upload", {
+      const res = await fetch("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
@@ -71,7 +71,7 @@ export function MediaForm({ conferenceId, slug, initialMedia }: MediaFormProps) 
     setStatus("idle");
 
     try {
-      const res = await fetch(`/api/admin/media`, {
+      const res = await fetch(`/conference-admin/api/admin/media`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, media: formData })
