@@ -103,6 +103,24 @@ export async function POST(request: Request) {
       }
     }
 
+    // Create Audit Log
+    try {
+      await prisma.auditLog.create({
+        data: {
+          action: "content.updated",
+          entity: "SystemSetting",
+          entityId: targetConfId,
+          metadata: {
+            updatedSections: sections ? sections.map((s: any) => s.id) : [],
+            hasFooterUpdate: !!footer,
+            hasFaviconUpdate: faviconUrl !== undefined
+          }
+        }
+      });
+    } catch (e) {
+      console.warn("Audit log creation error:", e);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Admin content save error:", error);

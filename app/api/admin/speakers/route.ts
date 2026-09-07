@@ -32,6 +32,18 @@ export async function POST(request: Request) {
           sortOrder: data.sortOrder ? parseInt(data.sortOrder) : 0
         }
       });
+
+      try {
+        await prisma.auditLog.create({
+          data: {
+            action: "speaker.created",
+            entity: "Speaker",
+            entityId: speaker.id,
+            metadata: { name: speaker.name, role: speaker.role, topic: speaker.topic }
+          }
+        });
+      } catch (e) {}
+
       return NextResponse.json({ success: true, speaker });
     }
 
@@ -66,6 +78,18 @@ export async function POST(request: Request) {
         where: { id: speakerId },
         data: updateData
       });
+
+      try {
+        await prisma.auditLog.create({
+          data: {
+            action: "speaker.updated",
+            entity: "Speaker",
+            entityId: speaker.id,
+            metadata: { name: speaker.name, role: speaker.role, topic: speaker.topic }
+          }
+        });
+      } catch (e) {}
+
       return NextResponse.json({ success: true, speaker });
     }
 
@@ -74,6 +98,18 @@ export async function POST(request: Request) {
         where: { id: speakerId },
         data: { deletedAt: new Date() }
       });
+
+      try {
+        await prisma.auditLog.create({
+          data: {
+            action: "speaker.deleted",
+            entity: "Speaker",
+            entityId: speakerId,
+            metadata: { speakerId }
+          }
+        });
+      } catch (e) {}
+
       return NextResponse.json({ success: true });
     }
 

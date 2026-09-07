@@ -45,6 +45,22 @@ export async function POST(request: Request) {
       }
     });
 
+    try {
+      await prisma.auditLog.create({
+        data: {
+          action: "file.uploaded",
+          entity: "FileAsset",
+          entityId: fileAsset.id,
+          metadata: {
+            fileName: file.name,
+            url: relativeUrl,
+            folder,
+            sizeBytes: buffer.length
+          }
+        }
+      });
+    } catch (e) {}
+
     return NextResponse.json({
       success: true,
       url: relativeUrl,

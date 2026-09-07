@@ -45,6 +45,21 @@ export async function POST(request: Request) {
       }
     });
 
+    try {
+      await prisma.auditLog.create({
+        data: {
+          action: "seo.updated",
+          entity: "SystemSetting",
+          entityId: targetConfId,
+          metadata: {
+            metaTitle: seo.metaTitle,
+            metaDescription: seo.metaDescription,
+            canonicalUrl: seo.canonicalUrl
+          }
+        }
+      });
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Admin SEO save error:", error);

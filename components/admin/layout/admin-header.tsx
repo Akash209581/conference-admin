@@ -1,8 +1,9 @@
-﻿"use client";
+"use client";
 
 import { ConferenceSwitcher } from "@/components/admin/conference-switcher";
-import { ShieldCheck, User, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ShieldCheck, User, LogOut, History } from "lucide-react";
+import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 
 interface AdminHeaderProps {
   conferences: Array<{ id: string; name: string; slug: string }>;
@@ -11,6 +12,8 @@ interface AdminHeaderProps {
 
 export function AdminHeader({ conferences, currentSlug }: AdminHeaderProps) {
   const router = useRouter();
+  const params = useParams();
+  const activeSlug = (params?.slug as string) || currentSlug;
 
   const handleLogout = async () => {
     try {
@@ -35,6 +38,15 @@ export function AdminHeader({ conferences, currentSlug }: AdminHeaderProps) {
 
       {/* Right: Actions and Admin User Profile */}
       <div className="flex items-center gap-3">
+        <Link
+          href={`/${activeSlug}/history`}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 border border-slate-200 text-slate-700 text-xs font-semibold transition-all"
+          title="View Audit History"
+        >
+          <History className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">History</span>
+        </Link>
+
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
           <ShieldCheck className="w-4 h-4 text-indigo-600" />
           <span>Super Admin Access</span>

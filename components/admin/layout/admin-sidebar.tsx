@@ -10,7 +10,8 @@ import {
   DollarSign,
   ShieldCheck,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  History
 } from "lucide-react";
 import LinkComponent from "next/link";
 
@@ -54,6 +55,11 @@ export function AdminSidebar({ slug }: AdminSidebarProps) {
       name: "Revenue & Payments",
       href: `/${activeSlug}/revenue`,
       icon: DollarSign
+    },
+    {
+      name: "Activity History",
+      href: `/${activeSlug}/history`,
+      icon: History
     }
   ];
 

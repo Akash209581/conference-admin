@@ -45,6 +45,23 @@ export async function POST(request: Request) {
       }
     });
 
+    try {
+      await prisma.auditLog.create({
+        data: {
+          action: "media.updated",
+          entity: "SystemSetting",
+          entityId: targetConfId,
+          metadata: {
+            faviconUrl: media.faviconUrl,
+            headerLogoUrl: media.headerLogoUrl,
+            footerLogoUrl: media.footerLogoUrl,
+            heroBannerUrl: media.heroBannerUrl,
+            ogImageUrl: media.ogImageUrl
+          }
+        }
+      });
+    } catch (e) {}
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Admin media save error:", error);
