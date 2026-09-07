@@ -20,32 +20,26 @@ export async function POST(request: Request) {
     const uniqueFileName = `${Date.now()}_${safeName}`;
     const relativeUrl = `/uploads/${folder}/${uniqueFileName}`;
 
-    const adminUploadDir = path.join(process.cwd(), "public", "uploads", folder);
-    const mainwebUploadDir = path.resolve(process.cwd(), "..", "mainweb", "public", "uploads", folder);
-    const configuredPath = process.env.UPLOADS_PATH || (fs.existsSync("/data/uploads") ? "/data/uploads" : null);
-    const customUploadsDir = configuredPath ? path.join(configuredPath, folder) : null;
+    const targetDirs = [
+      path.join(process.cwd(), "public", "uploads", folder),
+      path.resolve(process.cwd(), "..", "mainweb", "public", "uploads", folder),
+      process.env.UPLOADS_PATH ? path.join(process.env.UPLOADS_PATH, folder) : null,
+      path.join("/data/uploads", folder)
+    ].filter(Boolean) as string[];
 
-    if (!fs.existsSync(adminUploadDir)) fs.mkdirSync(adminUploadDir, { recursive: true });
-    if (!fs.existsSync(mainwebUploadDir)) fs.mkdirSync(mainwebUploadDir, { recursive: true });
-    if (customUploadsDir && !fs.existsSync(customUploadsDir)) {
+    for (const dir of targetDirs) {
       try {
-        fs.mkdirSync(customUploadsDir, { recursive: true });
-      } catch (e) {}
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        const filePath = path.join(dir, uniqueFileName);
+        fs.writeFileSync(filePath, buffer);
+        fs.chmodSync(filePath, 0o777);
+      } catch (e) {
+        // Continue writing to remaining locations
+      }
     }
 
-    const adminFilePath = path.join(adminUploadDir, uniqueFileName);
-    const mainwebFilePath = path.join(mainwebUploadDir, uniqueFileName);
-
-    fs.writeFileSync(adminFilePath, buffer);
-    try {
-      fs.writeFileSync(mainwebFilePath, buffer);
-    } catch (e) {}
-
-    if (customUploadsDir) {
-      try {
-        fs.writeFileSync(path.join(customUploadsDir, uniqueFileName), buffer);
-      } catch (e) {}
-    }
 
 
 

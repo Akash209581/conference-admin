@@ -128,7 +128,16 @@ export async function POST(request: Request) {
       console.warn("Audit log creation error:", e);
     }
 
+    // Attempt cache revalidation pings to mainweb
+    try {
+      const confSlug = slug || "ICGIT";
+      await fetch(`http://127.0.0.1:3001/api/revalidate?path=/${confSlug}`, { method: "POST" }).catch(() => {});
+      await fetch(`http://127.0.0.1:3001/api/revalidate?path=/`, { method: "POST" }).catch(() => {});
+    } catch (_) {}
+
     return NextResponse.json({ success: true });
+
+
   } catch (error: any) {
     console.error("Admin content save error:", error);
     return NextResponse.json({ error: error.message || "Failed to update content" }, { status: 500 });
