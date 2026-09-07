@@ -1,19 +1,29 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    const validEmail = process.env.ADMIN_EMAIL || "admin@hanscinovum.com";
-    const validPassword = process.env.ADMIN_PASSWORD || "admin123";
+    const validEmail = process.env.ADMIN_EMAIL;
+    const validPassword = process.env.ADMIN_PASSWORD;
+    const sessionSecret = process.env.ADMIN_SESSION_SECRET || "authenticated_super_admin_session_key";
+
+    if (!validEmail || !validPassword) {
+      return NextResponse.json(
+        { success: false, error: "ADMIN_EMAIL and ADMIN_PASSWORD must be configured in .env on the server." },
+        { status: 500 }
+      );
+    }
 
     if (
-      (email === validEmail || email === "admin@hanscinovum.com" || email === "admin") &&
-      (password === validPassword || password === "admin123" || password === "admin")
+      email &&
+      password &&
+      email.trim().toLowerCase() === validEmail.trim().toLowerCase() &&
+      password === validPassword
     ) {
       const cookieStore = await cookies();
-      cookieStore.set("admin_session", "authenticated_super_admin_session_key", {
+      cookieStore.set("admin_session", sessionSecret, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
