@@ -93,6 +93,122 @@ interface ContentFormProps {
   initialSpeakers?: SpeakerItem[];
 }
 
+const DEFAULT_SECTIONS: SectionItem[] = [
+  {
+    id: "hero",
+    name: "HERO",
+    visible: true,
+    fields: {
+      badge: "DECEMBER 8–10, 2026 • DUBAI, UAE",
+      title: "50 TH INTERNATIONAL CONFERENCE",
+      titleColor: "Global Innovation & Technology",
+      description: "Bringing together 2,000+ visionaries, researchers, and industry leaders from 80+ countries to shape the future of global innovation and emerging technologies.",
+      heroVenue: "Dubai World Trade Centre, Dubai",
+      heroDates: "December 8–10, 2026",
+      heroMode: "Hybrid Event",
+      ctaText2: "Register Now",
+      heroImage: ""
+    }
+  },
+  {
+    id: "countdown",
+    name: "COUNTDOWN",
+    visible: true,
+    fields: {
+      badge: "⏳ Conference Begins In",
+      title: "Don't Miss This Global Event",
+      targetDate: "2026-12-08T09:00:00"
+    }
+  },
+  {
+    id: "about",
+    name: "ABOUT",
+    visible: true,
+    fields: {
+      badge: "About the Conference",
+      title: "Shaping the Future Together",
+      paragraph1: "The International Conference on Global Innovation and Technology brings together leading academic scientists, researchers, and scholars to exchange and share their experiences and research results.",
+      paragraph2: "It also provides a premier interdisciplinary platform for researchers, practitioners, and educators to present and discuss the most recent innovations, trends, and concerns."
+    }
+  },
+  {
+    id: "sessions",
+    name: "SESSIONS",
+    visible: true,
+    fields: {
+      badge: "🎯 Conference Program",
+      title: "Sessions, Tracks & Key Dates",
+      description: "Explore the multifaceted agenda designed to cover breakthrough advancements across artificial intelligence, cloud architectures, cybersecurity, and future computing paradigms."
+    }
+  },
+  {
+    id: "speakers",
+    name: "SPEAKERS",
+    visible: true,
+    fields: {
+      badge: "Visionary Thought Leaders",
+      title: "World-Class Keynotes & Panelists",
+      description: "Hear from the foremost minds in academia and industry shaping tomorrow's technology landscape."
+    }
+  },
+  {
+    id: "venue",
+    name: "VENUE",
+    visible: true,
+    fields: {
+      badge: "EVENT LOCATION",
+      title: "Hosted in the Heart of Dubai",
+      description: "Dubai World Trade Centre, situated at the crossroads of the world, provides state-of-the-art facilities for hybrid participation, networking lounges, and interactive exhibition halls.",
+      format: "Hybrid (Onsite & Online)",
+      mainHall: "Sheikh Maktoum Hall",
+      mapLink: "Dubai World Trade Centre, Dubai"
+    }
+  },
+  {
+    id: "contact",
+    name: "CONTACT",
+    visible: true,
+    fields: {
+      badge: "✉ Contact Secretariat",
+      title: "Get in Touch",
+      description: "Questions on registration, submission, or corporate sponsorship? Send us an inquiry below and our conference committee will assist you promptly."
+    }
+  }
+];
+
+function buildMergedSections(initial: SectionItem[]): SectionItem[] {
+  if (!initial || !Array.isArray(initial) || initial.length === 0) {
+    return DEFAULT_SECTIONS;
+  }
+
+  const result: SectionItem[] = [];
+
+  for (const def of DEFAULT_SECTIONS) {
+    const existing = initial.find((s) => s.id === def.id);
+    if (existing) {
+      result.push({
+        ...def,
+        ...existing,
+        visible: existing.visible !== undefined ? existing.visible : def.visible,
+        fields: {
+          ...def.fields,
+          ...(existing.fields || {})
+        }
+      });
+    } else {
+      result.push(def);
+    }
+  }
+
+  for (const custom of initial) {
+    if (!DEFAULT_SECTIONS.some((d) => d.id === custom.id)) {
+      result.push(custom);
+    }
+  }
+
+  return result;
+}
+
 export function ContentForm({
   conferenceId,
   slug,
@@ -101,7 +217,8 @@ export function ContentForm({
   initialSpeakers = [],
   initialFaviconUrl = "/favicon.ico"
 }: ContentFormProps) {
-  const [sections, setSections] = useState<SectionItem[]>(initialSections);
+  const [sections, setSections] = useState<SectionItem[]>(() => buildMergedSections(initialSections));
+
   const [footerData, setFooterData] = useState<FooterData>({
     tagline: initialFooter?.tagline || "International Conference on Global Innovation and Technology",
     contactEmail: initialFooter?.contactEmail || "secretariat@icgit2026.org",
