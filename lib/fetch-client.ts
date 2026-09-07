@@ -19,7 +19,12 @@ export async function safeFetchJson<T = any>(
       }
     } else {
       const text = await res.text();
-      body = text ? { error: text } : null;
+      // If server returned raw HTML error page (e.g., Nginx 413 / 502), do not display HTML markup
+      if (text && (text.includes("<html") || text.includes("<!DOCTYPE"))) {
+        body = null;
+      } else {
+        body = text ? { error: text } : null;
+      }
     }
 
     if (!res.ok) {
@@ -30,9 +35,31 @@ export async function safeFetchJson<T = any>(
           status: res.status
         };
       }
+      if (res.status === 413) {
+        return {
+          ok: false,
+          error: "The uploaded file is too large (HTTP 413). Please choose an image under 25MB or increase Nginx client_max_body_size.",
+          status: res.status
+        };
+      }
+      if (res.status === 502 || res.status === 503) {
+        return {
+          ok: false,
+          error: `Server is temporarily unavailable (HTTP ${res.status}). Please try again shortly.`,
+          status: res.status
+        };
+      }
+      if (res.status === 504) {
+        return {
+          ok: false,
+          error: "Request timed out (HTTP 504). Please try again.",
+          status: res.status
+        };
+      }
+
       return {
         ok: false,
-        error: body?.error || `Request failed (HTTP ${res.status})`,
+        error: body?.error || `Request failed with status code ${res.status}.`,
         status: res.status
       };
     }
@@ -46,3 +73,4 @@ export async function safeFetchJson<T = any>(
     };
   }
 }
+
