@@ -1,13 +1,15 @@
-﻿import { prisma } from "@/lib/prisma/client";
+import { prisma } from "@/lib/prisma/client";
 import { AdminSidebar } from "@/components/admin/layout/admin-sidebar";
 import { AdminHeader } from "@/components/admin/layout/admin-header";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardLayout({
-  children
+  children,
+  params
 }: {
   children: React.ReactNode;
+  params?: Promise<{ slug?: string }>;
 }) {
   let conferences: Array<{ id: string; name: string; slug: string }> = [];
   try {
@@ -20,7 +22,8 @@ export default async function DashboardLayout({
     console.error("Admin layout DB error:", err);
   }
 
-  const currentSlug = conferences[0]?.slug || "icgit-2026";
+  const resolvedParams = params ? await params : undefined;
+  const currentSlug = resolvedParams?.slug || conferences[0]?.slug || "icgit-2026";
 
   return (
     <>

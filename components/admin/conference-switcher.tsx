@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { ChevronDown, Building2, Check } from "lucide-react";
 
 interface ConferenceSwitcherProps {
@@ -14,9 +14,11 @@ export function ConferenceSwitcher({
   currentSlug
 }: ConferenceSwitcherProps) {
   const router = useRouter();
+  const params = useParams();
   const [open, setOpen] = useState(false);
 
-  const currentConf = conferences.find((c) => c.slug === currentSlug) || conferences[0];
+  const activeSlug = (params?.slug as string) || currentSlug;
+  const currentConf = conferences.find((c) => c.slug === activeSlug) || conferences[0];
 
   return (
     <div className="relative">
@@ -38,7 +40,7 @@ export function ConferenceSwitcher({
             </div>
             <div className="py-1 space-y-0.5">
               {conferences.map((conf) => {
-                const isSelected = conf.slug === currentSlug;
+                const isSelected = conf.slug === activeSlug;
                 return (
                   <button
                     key={conf.id}

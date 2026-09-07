@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -20,37 +20,39 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ slug }: AdminSidebarProps) {
   const pathname = usePathname();
+  const params = useParams();
+  const activeSlug = (params?.slug as string) || slug;
 
   const navItems = [
     {
       name: "Overview",
-      href: `/${slug}`,
+      href: `/${activeSlug}`,
       icon: LayoutDashboard,
       exact: true
     },
     {
       name: "Website Content",
-      href: `/${slug}/content`,
+      href: `/${activeSlug}/content`,
       icon: FileText
     },
     {
       name: "SEO & Metadata",
-      href: `/${slug}/seo`,
+      href: `/${activeSlug}/seo`,
       icon: Globe2
     },
     {
       name: "Abstract Submissions",
-      href: `/${slug}/submissions`,
+      href: `/${activeSlug}/submissions`,
       icon: FileCheck2
     },
     {
       name: "Attendees & Registrations",
-      href: `/${slug}/registrations`,
+      href: `/${activeSlug}/registrations`,
       icon: Users
     },
     {
       name: "Revenue & Payments",
-      href: `/${slug}/revenue`,
+      href: `/${activeSlug}/revenue`,
       icon: DollarSign
     }
   ];
