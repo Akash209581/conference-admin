@@ -22,9 +22,15 @@ export async function POST(request: Request) {
 
     const adminUploadDir = path.join(process.cwd(), "public", "uploads", folder);
     const mainwebUploadDir = path.resolve(process.cwd(), "..", "mainweb", "public", "uploads", folder);
+    const customUploadsDir = process.env.UPLOADS_PATH ? path.join(process.env.UPLOADS_PATH, folder) : null;
 
     if (!fs.existsSync(adminUploadDir)) fs.mkdirSync(adminUploadDir, { recursive: true });
     if (!fs.existsSync(mainwebUploadDir)) fs.mkdirSync(mainwebUploadDir, { recursive: true });
+    if (customUploadsDir && !fs.existsSync(customUploadsDir)) {
+      try {
+        fs.mkdirSync(customUploadsDir, { recursive: true });
+      } catch (e) {}
+    }
 
     const adminFilePath = path.join(adminUploadDir, uniqueFileName);
     const mainwebFilePath = path.join(mainwebUploadDir, uniqueFileName);
@@ -33,6 +39,13 @@ export async function POST(request: Request) {
     try {
       fs.writeFileSync(mainwebFilePath, buffer);
     } catch (e) {}
+
+    if (customUploadsDir) {
+      try {
+        fs.writeFileSync(path.join(customUploadsDir, uniqueFileName), buffer);
+      } catch (e) {}
+    }
+
 
     const fileAsset = await prisma.fileAsset.create({
       data: {
