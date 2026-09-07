@@ -12,14 +12,12 @@ export default async function ContentEditorPage({
   const resolvedParams = await Promise.resolve(params);
   const slug = resolvedParams.slug;
 
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
   const conference = await prisma.conference.findFirst({
-    where: {
-      OR: [
-        { slug: { equals: slug, mode: "insensitive" } },
-        { id: slug }
-      ],
-      deletedAt: null
-    },
+    where: isUUID
+      ? { OR: [{ id: slug }, { slug: { equals: slug, mode: "insensitive" } }], deletedAt: null }
+      : { slug: { equals: slug, mode: "insensitive" }, deletedAt: null },
     include: {
       venue: true,
       settings: true,
@@ -30,6 +28,7 @@ export default async function ContentEditorPage({
       }
     }
   });
+
 
 
   const conferenceId = conference?.id || "";

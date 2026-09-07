@@ -7,14 +7,11 @@ export async function POST(request: Request) {
 
     let targetConfId = conferenceId;
     if (!targetConfId && slug) {
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
       const conf = await prisma.conference.findFirst({
-        where: {
-          OR: [
-            { slug: { equals: slug, mode: "insensitive" } },
-            { id: slug }
-          ],
-          deletedAt: null
-        }
+        where: isUUID
+          ? { OR: [{ id: slug }, { slug: { equals: slug, mode: "insensitive" } }], deletedAt: null }
+          : { slug: { equals: slug, mode: "insensitive" }, deletedAt: null }
       });
       targetConfId = conf?.id;
     }
@@ -22,6 +19,7 @@ export async function POST(request: Request) {
     if (!targetConfId) {
       return NextResponse.json({ error: "Conference not found in database" }, { status: 404 });
     }
+
 
 
     // Save page_content_home setting (all sections array with visibility and fields)
