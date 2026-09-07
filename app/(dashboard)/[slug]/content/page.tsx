@@ -13,7 +13,13 @@ export default async function ContentEditorPage({
   const slug = resolvedParams.slug;
 
   const conference = await prisma.conference.findFirst({
-    where: { slug, deletedAt: null },
+    where: {
+      OR: [
+        { slug: { equals: slug, mode: "insensitive" } },
+        { id: slug }
+      ],
+      deletedAt: null
+    },
     include: {
       venue: true,
       settings: true,
@@ -24,6 +30,7 @@ export default async function ContentEditorPage({
       }
     }
   });
+
 
   const conferenceId = conference?.id || "";
 

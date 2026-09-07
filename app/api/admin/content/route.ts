@@ -7,13 +7,22 @@ export async function POST(request: Request) {
 
     let targetConfId = conferenceId;
     if (!targetConfId && slug) {
-      const conf = await prisma.conference.findUnique({ where: { slug } });
+      const conf = await prisma.conference.findFirst({
+        where: {
+          OR: [
+            { slug: { equals: slug, mode: "insensitive" } },
+            { id: slug }
+          ],
+          deletedAt: null
+        }
+      });
       targetConfId = conf?.id;
     }
 
     if (!targetConfId) {
-      return NextResponse.json({ error: "Conference not found" }, { status: 404 });
+      return NextResponse.json({ error: "Conference not found in database" }, { status: 404 });
     }
+
 
     // Save page_content_home setting (all sections array with visibility and fields)
     if (sections) {
