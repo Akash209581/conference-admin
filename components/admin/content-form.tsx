@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import {
   Save,
   CheckCircle2,
@@ -24,6 +26,7 @@ import {
   ExternalLink,
   Link2
 } from "lucide-react";
+
 
 interface SectionField {
   badge?: string;
@@ -124,6 +127,7 @@ export function ContentForm({
   });
 
   const [speakers, setSpeakers] = useState<SpeakerItem[]>(initialSpeakers);
+  const toast = useToast();
   const [editingSpeaker, setEditingSpeaker] = useState<Partial<SpeakerItem> | null>(null);
   const [isNewSpeaker, setIsNewSpeaker] = useState(false);
   const [uploadingSpeakerPhoto, setUploadingSpeakerPhoto] = useState(false);
@@ -199,21 +203,25 @@ export function ContentForm({
       data.append("file", file);
       data.append("folder", "hero");
 
-      const res = await fetch("/conference-admin/api/admin/upload", {
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Hero upload failed");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Hero image upload failed");
+      }
 
-      updateSectionField("hero", "heroImage", result.url);
+      updateSectionField("hero", "heroImage", res.data.url);
       setStatus("success");
-      setMessage(`Hero image uploaded: ${result.url}`);
+      setMessage(`Hero image uploaded: ${res.data.url}`);
+      toast.success("Hero image uploaded successfully!", "Upload Complete");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to upload hero image");
+      const errText = err.message || "Failed to upload hero image";
+      setMessage(errText);
+      toast.error(errText, "Upload Error");
     } finally {
       setUploadingHero(false);
     }
@@ -233,7 +241,7 @@ export function ContentForm({
     setIsNewSpeaker(true);
   };
 
-    const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploadingFavicon(true);
@@ -243,19 +251,24 @@ export function ContentForm({
       data.append("conferenceId", conferenceId);
       data.append("category", "branding");
 
-      const res = await fetch("/conference-admin/api/admin/upload", {
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
 
-      if (!res.ok) throw new Error("Failed to upload favicon");
-      const result = await res.json();
-      setFaviconUrl(result.url);
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Failed to upload favicon");
+      }
+
+      setFaviconUrl(res.data.url);
       setStatus("success");
       setMessage("Favicon uploaded successfully! Click 'Publish All Section Changes' to save.");
+      toast.success("Favicon uploaded successfully!", "Favicon Ready");
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Favicon upload failed");
+      const errText = err.message || "Favicon upload failed";
+      setMessage(errText);
+      toast.error(errText, "Upload Error");
     } finally {
       setUploadingFavicon(false);
     }
@@ -271,25 +284,29 @@ export function ContentForm({
       data.append("file", file);
       data.append("folder", "speakers");
 
-      const res = await fetch("/conference-admin/api/admin/upload", {
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Speaker photo upload failed");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Speaker photo upload failed");
+      }
 
       setEditingSpeaker((prev) => ({
         ...prev,
-        imageAssetId: result.url
+        imageAssetId: res.data!.url
       }));
 
       setStatus("success");
-      setMessage(`Speaker photo uploaded: ${result.url}`);
+      setMessage(`Speaker photo uploaded: ${res.data.url}`);
+      toast.success("Speaker photo uploaded successfully!", "Photo Uploaded");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to upload photo");
+      const errText = err.message || "Failed to upload photo";
+      setMessage(errText);
+      toast.error(errText, "Photo Error");
     } finally {
       setUploadingSpeakerPhoto(false);
     }
@@ -300,7 +317,7 @@ export function ContentForm({
     if (!editingSpeaker) return;
 
     try {
-      const res = await fetch("/conference-admin/api/admin/speakers", {
+      const res = await safeFetchJson<{ speaker: SpeakerItem }>("/conference-admin/api/admin/speakers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -311,23 +328,27 @@ export function ContentForm({
         })
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Failed to save speaker");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Failed to save speaker");
+      }
 
       if (isNewSpeaker) {
-        setSpeakers([...speakers, result.speaker]);
+        setSpeakers([...speakers, res.data.speaker]);
       } else {
-        setSpeakers(speakers.map((s) => (s.id === result.speaker.id ? result.speaker : s)));
+        setSpeakers(speakers.map((s) => (s.id === res.data!.speaker.id ? res.data!.speaker : s)));
       }
 
       setEditingSpeaker(null);
       setIsNewSpeaker(false);
       setStatus("success");
       setMessage("Speaker photo & details saved in database!");
+      toast.success("Speaker saved and published successfully!", "Speaker Saved");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to save speaker");
+      const errText = err.message || "Failed to save speaker";
+      setMessage(errText);
+      toast.error(errText, "Speaker Error");
     }
   };
 
@@ -335,19 +356,24 @@ export function ContentForm({
     if (!confirm("Are you sure you want to delete this speaker?")) return;
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/speakers?id=${speakerId}`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/speakers?id=${speakerId}`, {
         method: "DELETE"
       });
 
-      if (!res.ok) throw new Error("Failed to delete speaker");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to delete speaker");
+      }
 
       setSpeakers(speakers.filter((s) => s.id !== speakerId));
       setStatus("success");
       setMessage("Speaker deleted from database.");
+      toast.info("Speaker deleted from roster.", "Speaker Removed");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to delete speaker");
+      const errText = err.message || "Failed to delete speaker";
+      setMessage(errText);
+      toast.error(errText, "Delete Failed");
     }
   };
 
@@ -409,24 +435,31 @@ export function ContentForm({
     setStatus("idle");
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/content`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/content`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, sections, footer: footerData })
       });
 
-      if (!res.ok) throw new Error("Failed to save content");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to save content");
+      }
 
       setStatus("success");
-      setMessage("All page content, venue map settings & footer links published to database successfully!");
+      const msg = "All page content, venue map settings & footer links published to database successfully!";
+      setMessage(msg);
+      toast.success(msg, "Changes Published");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to save content");
+      const errText = err.message || "Failed to save content";
+      setMessage(errText);
+      toast.error(errText, "Publication Error");
     } finally {
       setSaving(false);
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

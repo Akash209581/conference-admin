@@ -1,7 +1,9 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { Save, CheckCircle2, AlertCircle, Image as ImageIcon, Upload, Loader2, Palette, } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
+import { Save, CheckCircle2, AlertCircle, Image as ImageIcon, Upload, Loader2, Palette } from "lucide-react";
 
 interface MediaFormProps {
   conferenceId: string;
@@ -16,6 +18,7 @@ interface MediaFormProps {
 }
 
 export function MediaForm({ conferenceId, slug, initialMedia }: MediaFormProps) {
+  const toast = useToast();
   const [formData, setFormData] = useState(initialMedia);
   const [saving, setSaving] = useState(false);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
@@ -41,25 +44,29 @@ export function MediaForm({ conferenceId, slug, initialMedia }: MediaFormProps) 
       data.append("file", file);
       data.append("folder", folder);
 
-      const res = await fetch("/conference-admin/api/admin/upload", {
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Upload failed");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Upload failed");
+      }
 
       setFormData((prev) => ({
         ...prev,
-        [fieldName]: result.url
+        [fieldName]: res.data!.url
       }));
 
       setStatus("success");
-      setMessage(`Image uploaded successfully: ${result.url}`);
+      setMessage(`Image uploaded successfully: ${res.data.url}`);
+      toast.success("Asset uploaded successfully!", "Upload Complete");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to upload image");
+      const errText = err.message || "Failed to upload image";
+      setMessage(errText);
+      toast.error(errText, "Upload Failed");
     } finally {
       setUploadingField(null);
     }
@@ -71,24 +78,31 @@ export function MediaForm({ conferenceId, slug, initialMedia }: MediaFormProps) 
     setStatus("idle");
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/media`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/media`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, media: formData })
       });
 
-      if (!res.ok) throw new Error("Failed to save media assets");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to save media assets");
+      }
 
       setStatus("success");
-      setMessage("Media branding & image locations updated in database successfully!");
+      const msg = "Media branding & image locations updated in database successfully!";
+      setMessage(msg);
+      toast.success(msg, "Branding Saved");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to save media");
+      const errText = err.message || "Failed to save media";
+      setMessage(errText);
+      toast.error(errText, "Save Error");
     } finally {
       setSaving(false);
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">

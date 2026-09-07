@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import { Save, CheckCircle2, AlertCircle, Globe2, Search } from "lucide-react";
 
 interface SeoFormProps {
@@ -16,6 +18,7 @@ interface SeoFormProps {
 }
 
 export function SeoForm({ conferenceId, slug, initialData }: SeoFormProps) {
+  const toast = useToast();
   const [formData, setFormData] = useState(initialData);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -34,24 +37,31 @@ export function SeoForm({ conferenceId, slug, initialData }: SeoFormProps) {
     setStatus("idle");
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/seo`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/seo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, seo: formData })
       });
 
-      if (!res.ok) throw new Error("Failed to save SEO settings");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to save SEO settings");
+      }
 
       setStatus("success");
-      setMessage("SEO & Metadata settings updated successfully!");
+      const msg = "SEO & Metadata settings updated successfully!";
+      setMessage(msg);
+      toast.success(msg, "SEO Updated");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to save SEO");
+      const errText = err.message || "Failed to save SEO";
+      setMessage(errText);
+      toast.error(errText, "SEO Error");
     } finally {
       setSaving(false);
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">

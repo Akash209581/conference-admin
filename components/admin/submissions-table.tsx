@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import { Search, Download, FileText, CheckCircle2, Clock, XCircle, AlertCircle } from "lucide-react";
 import { formatDateTime } from "@/lib/admin-utils";
 
@@ -22,6 +24,7 @@ interface SubmissionsTableProps {
 }
 
 export function SubmissionsTable({ submissions: initialData, conferenceSlug }: SubmissionsTableProps) {
+  const toast = useToast();
   const [submissions, setSubmissions] = useState<SubmissionItem[]>(initialData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
@@ -41,23 +44,27 @@ export function SubmissionsTable({ submissions: initialData, conferenceSlug }: S
   const handleStatusChange = async (submissionId: string, newStatus: string) => {
     setUpdatingId(submissionId);
     try {
-      const res = await fetch(`/conference-admin/api/admin/submissions/status`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/submissions/status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ submissionId, status: newStatus })
       });
 
-      if (!res.ok) throw new Error("Failed to update status");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to update status");
+      }
 
       setSubmissions((prev) =>
         prev.map((s) => (s.id === submissionId ? { ...s, status: newStatus } : s))
       );
+      toast.success(`Submission status updated to ${newStatus}`, "Status Updated");
     } catch (err: any) {
-      alert(err.message || "Failed to update submission status");
+      toast.error(err.message || "Failed to update submission status", "Update Failed");
     } finally {
       setUpdatingId(null);
     }
   };
+
 
   const exportCSV = () => {
     const headers = ["Title", "Track", "Author Name", "Author Email", "Keywords", "Status", "Submitted At"];

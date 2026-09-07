@@ -1,12 +1,15 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import { PlusCircle, Sparkles, Building2, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function NewConferencePage() {
   const router = useRouter();
+  const toast = useToast();
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
@@ -43,23 +46,31 @@ export default function NewConferencePage() {
     setError("");
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/conferences`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
+      const res = await safeFetchJson<{ conference: { slug: string; name: string } }>(
+        `/conference-admin/api/admin/conferences`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
+        }
+      );
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to create conference");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Failed to create conference");
+      }
 
-      router.push(`/${data.conference.slug}`);
+      toast.success(`Conference "${formData.name}" created successfully!`, "Conference Created");
+      router.push(`/${res.data.conference.slug}`);
       router.refresh();
     } catch (err: any) {
-      setError(err.message || "Failed to create conference");
+      const errMsg = err.message || "Failed to create conference";
+      setError(errMsg);
+      toast.error(errMsg, "Creation Error");
     } finally {
       setSaving(false);
     }
   };
+
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">

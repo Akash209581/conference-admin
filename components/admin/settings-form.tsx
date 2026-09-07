@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import { Save, CheckCircle2, AlertCircle, Building2, MapPin, Calendar, Globe } from "lucide-react";
 
 interface SettingsFormProps {
@@ -20,6 +22,7 @@ interface SettingsFormProps {
 }
 
 export function SettingsForm({ conferenceId, slug, initialData }: SettingsFormProps) {
+  const toast = useToast();
   const [formData, setFormData] = useState(initialData);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -38,24 +41,31 @@ export function SettingsForm({ conferenceId, slug, initialData }: SettingsFormPr
     setStatus("idle");
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/settings`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conferenceId, slug, data: formData })
       });
 
-      if (!res.ok) throw new Error("Failed to update conference settings");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to update conference settings");
+      }
 
       setStatus("success");
-      setMessage("Conference & Venue settings updated in database!");
+      const msg = "Conference & Venue settings updated in database!";
+      setMessage(msg);
+      toast.success(msg, "Settings Saved");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to save settings");
+      const errText = err.message || "Failed to save settings";
+      setMessage(errText);
+      toast.error(errText, "Settings Error");
     } finally {
       setSaving(false);
     }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">

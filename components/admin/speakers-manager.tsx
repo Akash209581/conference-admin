@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import {
   Save,
   Trash2,
@@ -32,6 +34,7 @@ interface SpeakersManagerProps {
 }
 
 export function SpeakersManager({ conferenceId, slug, initialSpeakers }: SpeakersManagerProps) {
+  const toast = useToast();
   const [speakers, setSpeakers] = useState<SpeakerItem[]>(initialSpeakers);
   const [editingSpeaker, setEditingSpeaker] = useState<Partial<SpeakerItem> | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -73,25 +76,29 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
       data.append("file", file);
       data.append("folder", "speakers");
 
-      const res = await fetch("/conference-admin/api/admin/upload", {
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
         method: "POST",
         body: data
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Photo upload failed");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Photo upload failed");
+      }
 
       setEditingSpeaker((prev) => ({
         ...prev,
-        imageAssetId: result.url
+        imageAssetId: res.data!.url
       }));
 
       setStatus("success");
-      setMessage(`Speaker photo uploaded: ${result.url}`);
+      setMessage(`Speaker photo uploaded: ${res.data.url}`);
+      toast.success("Speaker photo uploaded successfully!", "Photo Uploaded");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to upload photo");
+      const errText = err.message || "Failed to upload photo";
+      setMessage(errText);
+      toast.error(errText, "Upload Error");
     } finally {
       setUploading(false);
     }
@@ -105,7 +112,7 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
     setStatus("idle");
 
     try {
-      const res = await fetch("/conference-admin/api/admin/speakers", {
+      const res = await safeFetchJson<{ speaker: SpeakerItem }>("/conference-admin/api/admin/speakers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -116,23 +123,27 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
         })
       });
 
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Failed to save speaker");
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Failed to save speaker");
+      }
 
       if (isNew) {
-        setSpeakers([...speakers, result.speaker]);
+        setSpeakers([...speakers, res.data.speaker]);
       } else {
-        setSpeakers(speakers.map((s) => (s.id === result.speaker.id ? result.speaker : s)));
+        setSpeakers(speakers.map((s) => (s.id === res.data!.speaker.id ? res.data!.speaker : s)));
       }
 
       setEditingSpeaker(null);
       setIsNew(false);
       setStatus("success");
       setMessage("Speaker saved successfully in database!");
+      toast.success("Speaker details saved and live!", "Speaker Saved");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to save speaker");
+      const errText = err.message || "Failed to save speaker";
+      setMessage(errText);
+      toast.error(errText, "Save Error");
     } finally {
       setSaving(false);
     }
@@ -142,21 +153,27 @@ export function SpeakersManager({ conferenceId, slug, initialSpeakers }: Speaker
     if (!confirm("Are you sure you want to delete this speaker?")) return;
 
     try {
-      const res = await fetch(`/conference-admin/api/admin/speakers?id=${speakerId}`, {
+      const res = await safeFetchJson(`/conference-admin/api/admin/speakers?id=${speakerId}`, {
         method: "DELETE"
       });
 
-      if (!res.ok) throw new Error("Failed to delete speaker");
+      if (!res.ok) {
+        throw new Error(res.error || "Failed to delete speaker");
+      }
 
       setSpeakers(speakers.filter((s) => s.id !== speakerId));
       setStatus("success");
       setMessage("Speaker removed from database.");
+      toast.info("Speaker removed from database.", "Speaker Deleted");
       setTimeout(() => setStatus("idle"), 4000);
     } catch (err: any) {
       setStatus("error");
-      setMessage(err.message || "Failed to delete speaker");
+      const errText = err.message || "Failed to delete speaker";
+      setMessage(errText);
+      toast.error(errText, "Delete Failed");
     }
   };
+
 
   return (
     <div className="space-y-6">

@@ -1,11 +1,14 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
+import { safeFetchJson } from "@/lib/fetch-client";
 import { ShieldCheck, Lock, Mail, AlertCircle, ArrowRight, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,26 +20,28 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch("/conference-admin/api/auth/login", {
+      const res = await safeFetchJson<{ success: boolean; error?: string }>("/conference-admin/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
       });
 
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || "Invalid login credentials");
+      if (!res.ok || !res.data?.success) {
+        throw new Error(res.error || res.data?.error || "Invalid login credentials");
       }
 
+      toast.success("Welcome back, Super Admin!", "Login Successful");
       router.push("/");
       router.refresh();
     } catch (err: any) {
-      setError(err.message || "Failed to log in. Please try again.");
+      const errMsg = err.message || "Failed to log in. Please try again.";
+      setError(errMsg);
+      toast.error(errMsg, "Authentication Failed");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
