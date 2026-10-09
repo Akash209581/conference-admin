@@ -29,12 +29,17 @@ export default async function MediaPage({
 
   const themeTokens = (activeTheme?.tokens as any) || {};
 
+  // Read from branding_assets SystemSetting first (primary source written by media/route.ts),
+  // fall back to themeTokens for backward compatibility.
+  const brandingSetting = conference?.settings?.find((s) => s.key === "branding_assets");
+  const brandingVal = (brandingSetting?.value as any) || {};
+
   const initialMedia = {
-    heroBannerUrl: themeTokens.heroBannerUrl || "/about_banner.avif",
-    faviconUrl: themeTokens.faviconUrl || "/favicon.ico",
-    headerLogoUrl: themeTokens.headerLogoUrl || "",
-    footerLogoUrl: themeTokens.footerLogoUrl || "",
-    ogImageUrl: themeTokens.ogImageUrl || ""
+    heroBannerUrl: brandingVal.heroBannerUrl || themeTokens.heroBannerUrl || "/about_banner.avif",
+    faviconUrl: brandingVal.faviconUrl || themeTokens.faviconUrl || "/favicon.ico",
+    headerLogoUrl: brandingVal.headerLogoUrl || themeTokens.headerLogoUrl || "",
+    footerLogoUrl: brandingVal.footerLogoUrl || themeTokens.footerLogoUrl || "",
+    ogImageUrl: brandingVal.ogImageUrl || themeTokens.ogImageUrl || ""
   };
 
   return (

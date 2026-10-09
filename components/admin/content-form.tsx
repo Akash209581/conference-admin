@@ -429,8 +429,7 @@ export function ContentForm({
     }
   };
 
-  const handleSaveSpeaker = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveSpeaker = async () => {
     if (!editingSpeaker) return;
 
     try {
@@ -552,10 +551,11 @@ export function ContentForm({
     setStatus("idle");
 
     try {
+      // Include faviconUrl so it persists to DB along with sections & footer
       const res = await safeFetchJson(`/conference-admin/api/admin/content`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conferenceId, slug, sections, footer: footerData })
+        body: JSON.stringify({ conferenceId, slug, sections, footer: footerData, faviconUrl })
       });
 
       if (!res.ok) {
@@ -752,6 +752,41 @@ export function ContentForm({
                     />
                   </label>
                 </div>
+              </div>
+
+              {/* Favicon Upload Field */}
+              <div className="md:col-span-2 space-y-2 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <label className="text-xs font-bold text-slate-700 flex items-center gap-2">
+                  <span>🌐 Browser Tab Favicon</span>
+                  {faviconUrl && (
+                    <img
+                      src={faviconUrl}
+                      alt="Current favicon"
+                      className="w-5 h-5 rounded object-contain bg-white border border-slate-200"
+                      onError={(e) => ((e.target as HTMLElement).style.display = "none")}
+                    />
+                  )}
+                </label>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="text"
+                    value={faviconUrl}
+                    onChange={(e) => setFaviconUrl(e.target.value)}
+                    placeholder="/favicon.ico or /uploads/favicon/..."
+                    className="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                  />
+                  <label className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer border border-slate-300 transition shadow-sm shrink-0">
+                    {uploadingFavicon ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    <span>Upload Favicon</span>
+                    <input
+                      type="file"
+                      accept="image/*,.ico"
+                      onChange={handleFaviconUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                <p className="text-[11px] text-slate-500">Changes are saved when you click &quot;Publish All Section Changes&quot; below.</p>
               </div>
             </div>
           </div>
