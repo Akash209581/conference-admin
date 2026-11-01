@@ -39,10 +39,6 @@ export async function POST(request: Request) {
         // Continue writing to remaining locations
       }
     }
-
-
-
-
     const fileAsset = await prisma.fileAsset.create({
       data: {
         storageProvider: "local",

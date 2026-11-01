@@ -24,7 +24,17 @@ import {
   Edit2,
   User,
   ExternalLink,
-  Link2
+  Link2,
+  Users,
+  Compass,
+  RotateCcw,
+  ChevronUp,
+  ChevronDown,
+  Coins,
+  FileCheck,
+  Shield,
+  Tag,
+  Sparkles
 } from "lucide-react";
 
 
@@ -84,6 +94,196 @@ interface SpeakerItem {
   sortOrder: number;
 }
 
+export interface CommitteeMemberItem {
+  id: string;
+  name: string;
+  role: string;
+  group: string;
+  affiliation: string;
+  country: string;
+  expertise: string;
+  bio: string;
+  placeholder: boolean;
+  published: boolean;
+  photo?: string | null;
+}
+
+export interface TrackItem {
+  id: string;
+  name: string;
+  category: string;
+  summary: string;
+  topics: string[];
+  published: boolean;
+}
+
+export interface PricingSettings {
+  label: string;
+  note: string;
+  student: { EUR: number; USD: number; GBP: number };
+  academic: { EUR: number; USD: number; GBP: number };
+  industry: { EUR: number; USD: number; GBP: number };
+  accommodation: {
+    single: { EUR: number; USD: number; GBP: number };
+    double: { EUR: number; USD: number; GBP: number };
+  };
+}
+
+export interface AbstractSettings {
+  minWords: number;
+  maxWords: number;
+  maxFileMB: number;
+  guidelinesNote?: string;
+}
+
+export interface PolicySettings {
+  privacy: string;
+  terms: string;
+}
+
+export const DEFAULT_COMMITTEE: CommitteeMemberItem[] = [
+  {
+    id: "chair",
+    name: "Dr. Alistair Vance",
+    role: "Conference Chair",
+    group: "Conference leadership",
+    affiliation: "International Technology Institute",
+    country: "United Kingdom",
+    expertise: "Global Innovation & Technology Policy",
+    bio: "Professor of Emerging Technologies with over 20 years leading interdisciplinary science initiatives.",
+    placeholder: false,
+    published: true,
+    photo: null
+  },
+  {
+    id: "cochair",
+    name: "Prof. Elena Rostova",
+    role: "Conference Co-Chair",
+    group: "Conference leadership",
+    affiliation: "Zurich Innovation Labs",
+    country: "Switzerland",
+    expertise: "Computational Systems & AI",
+    bio: "Head of Distributed AI Architecture and international scientific consortium lead.",
+    placeholder: false,
+    published: true,
+    photo: null
+  },
+  {
+    id: "scientific-chair",
+    name: "Dr. Marcus Chen",
+    role: "Scientific Committee Chair",
+    group: "Scientific committee",
+    affiliation: "Singapore Technology Research",
+    country: "Singapore",
+    expertise: "Applied Machine Intelligence",
+    bio: "Chief Scientist overseeing peer review workflows and programmatic research track standards.",
+    placeholder: false,
+    published: true,
+    photo: null
+  },
+  {
+    id: "steering-1",
+    name: "Dr. Fatima Al-Mansoor",
+    role: "Steering Committee Member",
+    group: "Steering committee",
+    affiliation: "Dubai Technology & Science Authority",
+    country: "United Arab Emirates",
+    expertise: "Smart Cities & Digital Governance",
+    bio: "Strategic director steering global academic partnerships and municipal innovation hubs.",
+    placeholder: false,
+    published: true,
+    photo: null
+  },
+  {
+    id: "local-chair",
+    name: "Eng. Tariq Al-Hashimi",
+    role: "Local Organizing Chair",
+    group: "Local organizing team",
+    affiliation: "Dubai World Trade Centre Operations",
+    country: "United Arab Emirates",
+    expertise: "Host Venue & Delegate Experience",
+    bio: "Operations lead for high-capacity hybrid international congresses and summits.",
+    placeholder: false,
+    published: true,
+    photo: null
+  }
+];
+
+export const DEFAULT_TRACKS: TrackItem[] = [
+  {
+    id: "01",
+    name: "Artificial Intelligence & Autonomous Systems",
+    category: "Technology & AI",
+    summary: "Breakthrough machine learning, agentic models, and deep reasoning systems.",
+    topics: ["Foundational LLMs", "Robotics & Perception", "Autonomous Decisioning", "AI Safety & Ethics"],
+    published: true
+  },
+  {
+    id: "02",
+    name: "Cloud Architectures & Distributed Systems",
+    category: "Computing Systems",
+    summary: "High-scale resilient distributed backends, microservices, and edge computing.",
+    topics: ["Edge Compute", "Kubernetes & Orchestration", "Fault-tolerant Systems", "Multi-cloud Resilience"],
+    published: true
+  },
+  {
+    id: "03",
+    name: "Cybersecurity, Zero Trust & Cryptography",
+    category: "Security",
+    summary: "Next-gen threat intelligence, cryptographic protocols, and infrastructure security.",
+    topics: ["Post-quantum Cryptography", "Zero Trust Architecture", "Cloud Security", "Vulnerability Research"],
+    published: true
+  },
+  {
+    id: "04",
+    name: "FinTech, Blockchain & Digital Economy",
+    category: "Economics & Tech",
+    summary: "Decentralized consensus, financial intelligence, and digital currency infrastructure.",
+    topics: ["Algorithmic Finance", "Smart Contracts", "Payment Protocols", "DeFi Compliance"],
+    published: true
+  },
+  {
+    id: "05",
+    name: "Biomedical Engineering & Digital Health",
+    category: "Health & Life Sciences",
+    summary: "Clinical informatics, genomic computations, and medical robotics.",
+    topics: ["Clinical AI", "Medical Imaging", "Wearable Health Sensors", "Health Data Privacy"],
+    published: true
+  },
+  {
+    id: "06",
+    name: "Sustainable Energy & Smart Urban Mobility",
+    category: "Sustainability",
+    summary: "Renewable energy distribution, smart grids, and autonomous transit solutions.",
+    topics: ["Grid Decarbonization", "Electric Vehicle Networks", "Smart City Logistics", "IoT Sensor Grids"],
+    published: true
+  }
+];
+
+export const DEFAULT_PRICING: PricingSettings = {
+  label: "Early-bird delegate rates",
+  note: "All delegate tiers include digital proceedings, hybrid stream access, and conference certificate.",
+  student: { EUR: 199, USD: 219, GBP: 179 },
+  academic: { EUR: 399, USD: 439, GBP: 359 },
+  industry: { EUR: 499, USD: 549, GBP: 449 },
+  accommodation: {
+    single: { EUR: 120, USD: 135, GBP: 105 },
+    double: { EUR: 160, USD: 180, GBP: 140 }
+  }
+};
+
+export const DEFAULT_ABSTRACT_SETTINGS: AbstractSettings = {
+  minWords: 250,
+  maxWords: 500,
+  maxFileMB: 5,
+  guidelinesNote: "All submitted abstracts undergo double-blind peer review by the scientific committee."
+};
+
+export const DEFAULT_POLICIES: PolicySettings = {
+  privacy: "Your personal details will be processed exclusively for conference management, registration, and certification in compliance with international privacy protocols.",
+  terms: "All accepted abstracts and registered delegates are subject to conference code of conduct, peer review guidelines, and attendance conditions."
+};
+
 interface ContentFormProps {
   initialFaviconUrl?: string;
   conferenceId: string;
@@ -91,7 +291,25 @@ interface ContentFormProps {
   initialSections: SectionItem[];
   initialFooter: FooterData;
   initialSpeakers?: SpeakerItem[];
+  initialNavbar?: LinkItem[];
+  initialCommittee?: CommitteeMemberItem[];
+  initialTracks?: TrackItem[];
+  initialPricing?: PricingSettings;
+  initialAbstractSettings?: AbstractSettings;
+  initialPolicies?: PolicySettings;
 }
+
+export const DEFAULT_NAVBAR: LinkItem[] = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/#about" },
+  { label: "Brochure", href: "/brochure" },
+  { label: "Tracks", href: "/sessions" },
+  { label: "Committee", href: "/#committee" },
+  { label: "Speakers", href: "/#speakers" },
+  { label: "Abstracts", href: "/abstracts" },
+  { label: "Registration", href: "/registration" },
+  { label: "Contact Us", href: "/#contact" }
+];
 
 const DEFAULT_SECTIONS: SectionItem[] = [
   {
@@ -126,7 +344,8 @@ const DEFAULT_SECTIONS: SectionItem[] = [
     visible: true,
     fields: {
       badge: "About the Conference",
-      title: "Shaping the Future Together",
+      title: "Pioneering the Next Era of",
+      titleColor: "Technological Breakthroughs",
       paragraph1: "The International Conference on Global Innovation and Technology brings together leading academic scientists, researchers, and scholars to exchange and share their experiences and research results.",
       paragraph2: "It also provides a premier interdisciplinary platform for researchers, practitioners, and educators to present and discuss the most recent innovations, trends, and concerns."
     }
@@ -139,6 +358,18 @@ const DEFAULT_SECTIONS: SectionItem[] = [
       badge: "🎯 Conference Program",
       title: "Sessions, Tracks & Key Dates",
       description: "Explore the multifaceted agenda designed to cover breakthrough advancements across artificial intelligence, cloud architectures, cybersecurity, and future computing paradigms."
+    }
+  },
+  {
+    id: "committee",
+    name: "COMMITTEE",
+    visible: true,
+    fields: {
+      badge: "ORGANIZING LEADERSHIP",
+      title: "Conference Organizing Committee",
+      description: "Distinguished academic leaders, steering committee members, and international co-chairs stewarding excellence in global technology innovation.",
+      ctaText1: "View Full Committee",
+      ctaLink1: "/committee"
     }
   },
   {
@@ -215,9 +446,52 @@ export function ContentForm({
   initialSections,
   initialFooter,
   initialSpeakers = [],
-  initialFaviconUrl = "/favicon.ico"
+  initialFaviconUrl = "/favicon.ico",
+  initialNavbar,
+  initialCommittee,
+  initialTracks,
+  initialPricing,
+  initialAbstractSettings,
+  initialPolicies
 }: ContentFormProps) {
   const [sections, setSections] = useState<SectionItem[]>(() => buildMergedSections(initialSections));
+
+  const [navbarItems, setNavbarItems] = useState<LinkItem[]>(() => {
+    if (initialNavbar && Array.isArray(initialNavbar) && initialNavbar.length > 0) {
+      return initialNavbar;
+    }
+    return DEFAULT_NAVBAR;
+  });
+
+  const [committeeMembers, setCommitteeMembers] = useState<CommitteeMemberItem[]>(() => {
+    if (initialCommittee && Array.isArray(initialCommittee) && initialCommittee.length > 0) {
+      return initialCommittee;
+    }
+    return DEFAULT_COMMITTEE;
+  });
+  const [editingMember, setEditingMember] = useState<Partial<CommitteeMemberItem> | null>(null);
+  const [isNewMember, setIsNewMember] = useState(false);
+
+  const [tracksList, setTracksList] = useState<TrackItem[]>(() => {
+    if (initialTracks && Array.isArray(initialTracks) && initialTracks.length > 0) {
+      return initialTracks;
+    }
+    return DEFAULT_TRACKS;
+  });
+  const [editingTrack, setEditingTrack] = useState<Partial<TrackItem> | null>(null);
+  const [isNewTrack, setIsNewTrack] = useState(false);
+
+  const [pricingData, setPricingData] = useState<PricingSettings>(() => {
+    return initialPricing || DEFAULT_PRICING;
+  });
+
+  const [abstractData, setAbstractData] = useState<AbstractSettings>(() => {
+    return initialAbstractSettings || DEFAULT_ABSTRACT_SETTINGS;
+  });
+
+  const [policiesData, setPoliciesData] = useState<PolicySettings>(() => {
+    return initialPolicies || DEFAULT_POLICIES;
+  });
 
   const [footerData, setFooterData] = useState<FooterData>({
     tagline: initialFooter?.tagline || "International Conference on Global Innovation and Technology",
@@ -228,16 +502,17 @@ export function ContentForm({
     quickLinks: initialFooter?.quickLinks || [
       { label: "Home", href: "/#home" },
       { label: "About", href: "/#about" },
-      { label: "Brochure", href: "/#brochure" },
+      { label: "Brochure", href: "/brochure" },
       { label: "Sessions", href: "/#sessions" },
+      { label: "Committee", href: "/#committee" },
       { label: "Speakers", href: "/#speakers" },
-      { label: "Venue", href: "/#venue" },
       { label: "Contact Us", href: "/#contact" }
     ],
     resourceLinks: initialFooter?.resourceLinks || [
       { label: "Brochure", href: "/brochure" },
       { label: "Abstract Submission", href: "/abstracts" },
       { label: "Registration", href: "/registration" },
+      { label: "Committee", href: "/committee" },
       { label: "Privacy Policy", href: "/privacy" },
       { label: "Terms of Service", href: "/terms" }
     ]
@@ -249,7 +524,7 @@ export function ContentForm({
   const [isNewSpeaker, setIsNewSpeaker] = useState(false);
   const [uploadingSpeakerPhoto, setUploadingSpeakerPhoto] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<string>("hero");
+  const [activeTab, setActiveTab] = useState<string>("navigation");
   const [saving, setSaving] = useState(false);
   const [faviconUrl, setFaviconUrl] = useState(initialFaviconUrl);
   const [uploadingFavicon, setUploadingFavicon] = useState(false);
@@ -258,15 +533,185 @@ export function ContentForm({
   const [message, setMessage] = useState("");
 
   const sectionTabs = [
+    { id: "navigation", label: "Navigation Bar", icon: Compass },
     { id: "hero", label: "Hero Banner", icon: LayoutTemplate },
     { id: "countdown", label: "Countdown Timer", icon: Clock },
     { id: "about", label: "About Conference", icon: BookOpen },
-    { id: "sessions", label: "Program & Tracks", icon: CalendarDays },
-    { id: "speakers", label: "Speakers Section", icon: Mic2 },
+    { id: "committee", label: "Organizing Committee", icon: Users },
+    { id: "speakers", label: "Keynote Speakers", icon: Mic2 },
+    { id: "sessions", label: "Tracks & Sessions", icon: CalendarDays },
+    { id: "pricing", label: "Pricing & Hotel", icon: Coins },
+    { id: "abstract", label: "Abstract Rules", icon: FileCheck },
     { id: "venue", label: "Venue & Location", icon: MapPin },
     { id: "contact", label: "Contact Secretariat", icon: Mail },
+    { id: "policies", label: "Policies & Terms", icon: Shield },
     { id: "footer", label: "Footer & Legal", icon: Layers }
   ];
+
+  // Committee Handlers
+  const moveCommitteeMember = (index: number, direction: "up" | "down") => {
+    setCommitteeMembers((prev) => {
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[targetIndex];
+      copy[targetIndex] = temp;
+      return copy;
+    });
+  };
+
+  const handleCreateMember = () => {
+    setEditingMember({
+      id: `member-${Date.now()}`,
+      name: "",
+      role: "Committee Member",
+      group: "Conference leadership",
+      affiliation: "",
+      country: "",
+      expertise: "",
+      bio: "",
+      photo: null,
+      placeholder: false,
+      published: true
+    });
+    setIsNewMember(true);
+  };
+
+  const handleSaveMember = () => {
+    if (!editingMember || !editingMember.role) {
+      toast.error("Role is required.", "Validation Error");
+      return;
+    }
+    const memberToSave: CommitteeMemberItem = {
+      id: editingMember.id || `member-${Date.now()}`,
+      name: editingMember.name || "Untitled Member",
+      role: editingMember.role,
+      group: editingMember.group || "Organizing committee",
+      affiliation: editingMember.affiliation || "",
+      country: editingMember.country || "",
+      expertise: editingMember.expertise || "",
+      bio: editingMember.bio || "",
+      photo: editingMember.photo || null,
+      placeholder: !!editingMember.placeholder,
+      published: editingMember.published !== false
+    };
+
+    if (isNewMember) {
+      setCommitteeMembers((prev) => [...prev, memberToSave]);
+      toast.success("New committee member added to list.", "Member Added");
+    } else {
+      setCommitteeMembers((prev) =>
+        prev.map((m) => (m.id === memberToSave.id ? memberToSave : m))
+      );
+      toast.success("Committee member profile updated.", "Member Updated");
+    }
+    setEditingMember(null);
+  };
+
+  const handleDeleteMember = (id: string) => {
+    setCommitteeMembers((prev) => prev.filter((m) => m.id !== id));
+    toast.info("Member removed from committee roster.", "Member Deleted");
+  };
+
+  // Tracks Handlers
+  const moveTrack = (index: number, direction: "up" | "down") => {
+    setTracksList((prev) => {
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[targetIndex];
+      copy[targetIndex] = temp;
+      return copy;
+    });
+  };
+
+  const handleCreateTrack = () => {
+    setEditingTrack({
+      id: `${String(tracksList.length + 1).padStart(2, "0")}`,
+      name: "",
+      category: "General",
+      summary: "",
+      topics: [],
+      published: true
+    });
+    setIsNewTrack(true);
+  };
+
+  const handleSaveTrack = () => {
+    if (!editingTrack || !editingTrack.name) {
+      toast.error("Track title is required.", "Validation Error");
+      return;
+    }
+    const trackToSave: TrackItem = {
+      id: editingTrack.id || `${String(tracksList.length + 1).padStart(2, "0")}`,
+      name: editingTrack.name,
+      category: editingTrack.category || "General",
+      summary: editingTrack.summary || "",
+      topics: Array.isArray(editingTrack.topics) ? editingTrack.topics : [],
+      published: editingTrack.published !== false
+    };
+
+    if (isNewTrack) {
+      setTracksList((prev) => [...prev, trackToSave]);
+      toast.success("New track added to conference programme.", "Track Added");
+    } else {
+      setTracksList((prev) =>
+        prev.map((t) => (t.id === trackToSave.id ? trackToSave : t))
+      );
+      toast.success("Research track updated.", "Track Updated");
+    }
+    setEditingTrack(null);
+  };
+
+  const handleDeleteTrack = (id: string) => {
+    setTracksList((prev) => prev.filter((t) => t.id !== id));
+    toast.info("Track removed from conference programme.", "Track Deleted");
+  };
+
+  // Navigation Bar Handlers
+  const moveNavItem = (index: number, direction: "up" | "down") => {
+    setNavbarItems((prev) => {
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[targetIndex];
+      copy[targetIndex] = temp;
+      return copy;
+    });
+  };
+
+  const addNavItem = (preset?: { label: string; href: string }) => {
+    setNavbarItems((prev) => [
+      ...prev,
+      preset || { label: "New Link", href: "/#" }
+    ]);
+  };
+
+  const updateNavItem = (index: number, key: "label" | "href", val: string) => {
+    setNavbarItems((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [key]: val };
+      return copy;
+    });
+  };
+
+  const removeNavItem = (index: number) => {
+    setNavbarItems((prev) => {
+      if (prev.length <= 1) {
+        toast.error("Navigation bar must have at least one link.", "Cannot Delete");
+        return prev;
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const resetNavbarToDefault = () => {
+    setNavbarItems(DEFAULT_NAVBAR);
+    toast.info("Reset navbar items to default conference structure.", "Reset Navigation");
+  };
 
   const getSection = (id: string): SectionItem => {
     return (
@@ -555,7 +1000,19 @@ export function ContentForm({
       const res = await safeFetchJson(`/conference-admin/api/admin/content`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conferenceId, slug, sections, footer: footerData, faviconUrl })
+        body: JSON.stringify({
+          conferenceId,
+          slug,
+          sections,
+          footer: footerData,
+          navigation: navbarItems,
+          committee: committeeMembers,
+          tracks: tracksList,
+          pricing: pricingData,
+          abstractSettings: abstractData,
+          policies: policiesData,
+          faviconUrl
+        })
       });
 
       if (!res.ok) {
@@ -563,7 +1020,7 @@ export function ContentForm({
       }
 
       setStatus("success");
-      const msg = "All page content, venue map settings & footer links published to database successfully!";
+      const msg = "All navigation, committee members, tracks, pricing, policies & website content published successfully!";
       setMessage(msg);
       toast.success(msg, "Changes Published");
       setTimeout(() => setStatus("idle"), 4000);
@@ -616,6 +1073,208 @@ export function ContentForm({
           );
         })}
       </div>
+
+      {/* TAB 0: NAVIGATION BAR */}
+      {activeTab === "navigation" && (
+        <div className="rounded-2xl bg-white border border-slate-200 p-6 lg:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <div className="flex items-center gap-2 text-indigo-700 font-bold text-base">
+                <Compass className="w-5 h-5" />
+                <span>Public Website Navigation Bar Editor</span>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                Customize header menu items. Change positions (move up/down), create new links, edit labels/URLs, or delete items.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={resetNavbarToDefault}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all cursor-pointer"
+                title="Reset to recommended conference navigation"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset Defaults</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => addNavItem()}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm shadow-indigo-600/20 transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Nav Link</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Quick-Add Presets */}
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                1-Click Quick-Add Conference Pages &amp; Sections:
+              </span>
+              <span className="text-[11px] text-slate-400">Click to append to navbar</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "Home", href: "/" },
+                { label: "About", href: "/#about" },
+                { label: "Brochure", href: "/brochure" },
+                { label: "Tracks", href: "/sessions" },
+                { label: "Committee", href: "/#committee" },
+                { label: "Speakers", href: "/#speakers" },
+                { label: "Abstracts", href: "/abstracts" },
+                { label: "Registration", href: "/registration" },
+                { label: "Venue", href: "/#venue" },
+                { label: "Contact Us", href: "/#contact" }
+              ].map((preset) => {
+                const alreadyExists = navbarItems.some((n) => n.href === preset.href);
+                return (
+                  <button
+                    key={preset.href}
+                    type="button"
+                    onClick={() => addNavItem(preset)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      alreadyExists
+                        ? "bg-slate-200/70 text-slate-600 hover:bg-slate-200"
+                        : "bg-white text-indigo-700 border border-indigo-200 hover:bg-indigo-50 shadow-2xs"
+                    }`}
+                  >
+                    <Plus className="w-3 h-3 text-indigo-500" />
+                    <span>{preset.label}</span>
+                    <span className="text-[10px] text-slate-400">({preset.href})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Live Preview Mockup */}
+          <div className="p-4 rounded-xl bg-slate-900 text-white shadow-inner space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
+              <span>Live Header Navigation Mockup</span>
+              <span>{navbarItems.length} Links Active</span>
+            </div>
+            <div className="flex items-center gap-2 overflow-x-auto py-2 px-1">
+              <span className="px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 font-bold text-xs shrink-0">
+                ICGIT 2026
+              </span>
+              <div className="h-4 w-px bg-slate-700 shrink-0 mx-1" />
+              {navbarItems.map((item, idx) => (
+                <span
+                  key={`preview-${idx}`}
+                  className="px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 bg-slate-800/80 whitespace-nowrap border border-slate-700/50"
+                >
+                  {item.label || "Untitled"}
+                </span>
+              ))}
+              <span className="ml-auto px-3 py-1 rounded-md bg-indigo-600 text-white text-xs font-bold shrink-0">
+                Register Now →
+              </span>
+            </div>
+          </div>
+
+          {/* Nav Items Table / List */}
+          <div className="space-y-3">
+            <div className="grid grid-cols-12 gap-3 px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="col-span-1 text-center">Pos</div>
+              <div className="col-span-2 text-center">Change Order</div>
+              <div className="col-span-4">Display Label</div>
+              <div className="col-span-4">Target Link / URL</div>
+              <div className="col-span-1 text-center">Delete</div>
+            </div>
+
+            {navbarItems.map((item, idx) => {
+              const isFirst = idx === 0;
+              const isLast = idx === navbarItems.length - 1;
+
+              return (
+                <div
+                  key={`nav-row-${idx}`}
+                  className="grid grid-cols-12 gap-3 items-center p-3 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-200 transition-all"
+                >
+                  {/* Position Badge */}
+                  <div className="col-span-1 flex justify-center">
+                    <span className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center">
+                      #{idx + 1}
+                    </span>
+                  </div>
+
+                  {/* Move Up / Move Down */}
+                  <div className="col-span-2 flex items-center justify-center gap-1.5">
+                    <button
+                      type="button"
+                      disabled={isFirst}
+                      onClick={() => moveNavItem(idx, "up")}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 text-xs font-medium disabled:opacity-25 disabled:pointer-events-none transition-colors cursor-pointer"
+                      title="Move Up"
+                    >
+                      <ChevronUp className="w-3.5 h-3.5" />
+                      <span>Up</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isLast}
+                      onClick={() => moveNavItem(idx, "down")}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 text-xs font-medium disabled:opacity-25 disabled:pointer-events-none transition-colors cursor-pointer"
+                      title="Move Down"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" />
+                      <span>Down</span>
+                    </button>
+                  </div>
+
+                  {/* Label */}
+                  <div className="col-span-4">
+                    <input
+                      type="text"
+                      value={item.label}
+                      onChange={(e) => updateNavItem(idx, "label", e.target.value)}
+                      placeholder="e.g. Committee"
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-xs font-medium placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                    />
+                  </div>
+
+                  {/* Href / Target */}
+                  <div className="col-span-4 flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={item.href}
+                      onChange={(e) => updateNavItem(idx, "href", e.target.value)}
+                      placeholder="e.g. /#committee or /sessions"
+                      className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-xs font-mono placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                    />
+                    <span
+                      className={`text-[10px] font-semibold px-2 py-1 rounded-md shrink-0 uppercase tracking-wider ${
+                        item.href.startsWith("/#")
+                          ? "bg-amber-100 text-amber-800"
+                          : item.href.startsWith("http")
+                          ? "bg-purple-100 text-purple-800"
+                          : "bg-blue-100 text-blue-800"
+                      }`}
+                    >
+                      {item.href.startsWith("/#") ? "Anchor" : item.href.startsWith("http") ? "External" : "Page"}
+                    </span>
+                  </div>
+
+                  {/* Delete */}
+                  <div className="col-span-1 flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => removeNavItem(idx)}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      title="Delete link"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: HERO */}
       {activeTab === "hero" && (() => {
@@ -839,6 +1498,19 @@ export function ContentForm({
                   className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
                 />
               </div>
+
+              <div className="md:col-span-2 space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Countdown Target Date &amp; Time (ISO or YYYY-MM-DDTHH:mm)</label>
+                <input
+                  type="datetime-local"
+                  value={sec.fields?.targetDate ? sec.fields.targetDate.slice(0, 16) : "2026-12-08T09:00"}
+                  onChange={(e) => updateSectionField("countdown", "targetDate", e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+                <p className="text-[11px] text-slate-500">
+                  The live countdown clock on the homepage calculates remaining days, hours, minutes, and seconds until this exact conference start time.
+                </p>
+              </div>
             </div>
           </div>
         );
@@ -887,6 +1559,17 @@ export function ContentForm({
                   value={sec.fields?.title || ""}
                   onChange={(e) => updateSectionField("about", "title", e.target.value)}
                   placeholder="Shaping the Future Together"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+              </div>
+
+              <div className="md:col-span-2 space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Title Accent / Highlight (Colored Second Part)</label>
+                <input
+                  type="text"
+                  value={sec.fields?.titleColor || ""}
+                  onChange={(e) => updateSectionField("about", "titleColor", e.target.value)}
+                  placeholder="e.g. Technological Breakthroughs"
                   className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
                 />
               </div>
@@ -973,6 +1656,555 @@ export function ContentForm({
                   placeholder="Explore the multifaceted agenda..."
                   className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
                 />
+              </div>
+            </div>
+
+            {/* Scientific Tracks Roster Manager */}
+            <div className="pt-6 border-t border-slate-100 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h4 className="font-bold text-slate-900 text-sm">
+                    Research Tracks &amp; Sessions Catalog ({tracksList.length} tracks)
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    Add, edit, reorder, and configure session topics for all tracks displayed on the homepage and at /sessions.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCreateTrack}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer self-start sm:self-auto"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Scientific Track</span>
+                </button>
+              </div>
+
+              {/* Edit / Add Track Drawer Box */}
+              {editingTrack && (
+                <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-4 animate-in fade-in">
+                  <div className="flex items-center justify-between pb-3 border-b border-indigo-200/80">
+                    <h5 className="font-bold text-indigo-950 text-sm">
+                      {isNewTrack ? "Create New Scientific Track" : `Edit Track #${editingTrack.id}: ${editingTrack.name}`}
+                    </h5>
+                    <button
+                      type="button"
+                      onClick={() => setEditingTrack(null)}
+                      className="text-xs text-slate-500 hover:text-slate-800 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Track Title *</label>
+                      <input
+                        type="text"
+                        value={editingTrack.name || ""}
+                        onChange={(e) => setEditingTrack({ ...editingTrack, name: e.target.value })}
+                        placeholder="e.g. Artificial Intelligence & Autonomous Systems"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Research Category / Discipline</label>
+                      <input
+                        type="text"
+                        value={editingTrack.category || ""}
+                        onChange={(e) => setEditingTrack({ ...editingTrack, category: e.target.value })}
+                        placeholder="e.g. Technology & AI"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Track Summary / Description</label>
+                      <textarea
+                        rows={2}
+                        value={editingTrack.summary || ""}
+                        onChange={(e) => setEditingTrack({ ...editingTrack, summary: e.target.value })}
+                        placeholder="Concise overview of this track's scope and research domains..."
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Session Topics (one per line)</label>
+                      <textarea
+                        rows={4}
+                        value={(editingTrack.topics || []).join("\n")}
+                        onChange={(e) =>
+                          setEditingTrack({
+                            ...editingTrack,
+                            topics: e.target.value.split("\n").filter((t) => t.trim() !== "")
+                          })
+                        }
+                        placeholder="Topic 1&#10;Topic 2&#10;Topic 3"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-mono focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="track-published"
+                        checked={editingTrack.published !== false}
+                        onChange={(e) => setEditingTrack({ ...editingTrack, published: e.target.checked })}
+                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <label htmlFor="track-published" className="text-xs font-semibold text-slate-700 cursor-pointer">
+                        Publish this track on public website
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-indigo-200/80">
+                    <button
+                      type="button"
+                      onClick={() => setEditingTrack(null)}
+                      className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveTrack}
+                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer"
+                    >
+                      Save Track
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Tracks List */}
+              <div className="space-y-2.5">
+                {tracksList.map((track, idx) => {
+                  const isFirst = idx === 0;
+                  const isLast = idx === tracksList.length - 1;
+
+                  return (
+                    <div
+                      key={track.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/90 hover:bg-white hover:shadow-xs transition"
+                    >
+                      <div className="flex items-start gap-3 min-w-0">
+                        <span className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0">
+                          #{String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h5 className="font-bold text-slate-900 text-xs sm:text-sm truncate">{track.name}</h5>
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-200 text-slate-700">
+                              {track.category}
+                            </span>
+                            {track.published === false && (
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
+                                Draft
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-500 truncate mt-0.5">{track.summary}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {track.topics?.length || 0} subtopics configured
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+                        <button
+                          type="button"
+                          disabled={isFirst}
+                          onClick={() => moveTrack(idx, "up")}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 disabled:opacity-25 transition cursor-pointer"
+                          title="Move Up"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isLast}
+                          onClick={() => moveTrack(idx, "down")}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 disabled:opacity-25 transition cursor-pointer"
+                          title="Move Down"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingTrack(track);
+                            setIsNewTrack(false);
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 text-xs font-semibold transition cursor-pointer"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteTrack(track.id)}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                          title="Delete track"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* TAB: ORGANIZING COMMITTEE (Positioned right above Speakers) */}
+      {activeTab === "committee" && (() => {
+        const sec = getSection("committee");
+        return (
+          <div className="rounded-2xl bg-white border border-slate-200 p-6 lg:p-8 shadow-sm space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2 text-indigo-700 font-bold text-base">
+                <Users className="w-5 h-5" />
+                <span>Organizing Committee Section Configuration</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => toggleSectionVisibility("committee")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                  sec.visible !== false
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-slate-100 text-slate-500 border-slate-200"
+                }`}
+              >
+                {sec.visible !== false ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                <span>{sec.visible !== false ? "Section Visible" : "Section Hidden"}</span>
+              </button>
+            </div>
+
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5">
+              <span className="font-bold text-amber-700 uppercase tracking-wider shrink-0 mt-0.5">Layout Note:</span>
+              <p>
+                The Organizing Committee section is positioned <strong>directly above the Featured Speakers section</strong> on the public homepage. Delegates can also explore the dedicated <a href="/committee" target="_blank" className="underline font-semibold text-amber-800">/committee</a> page.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Badge Text</label>
+                <input
+                  type="text"
+                  value={sec.fields?.badge || ""}
+                  onChange={(e) => updateSectionField("committee", "badge", e.target.value)}
+                  placeholder="ORGANIZING LEADERSHIP"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Heading Title</label>
+                <input
+                  type="text"
+                  value={sec.fields?.title || ""}
+                  onChange={(e) => updateSectionField("committee", "title", e.target.value)}
+                  placeholder="Conference Organizing Committee"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+              </div>
+
+              <div className="md:col-span-2 space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Section Subtitle / Description</label>
+                <textarea
+                  rows={2}
+                  value={sec.fields?.description || ""}
+                  onChange={(e) => updateSectionField("committee", "description", e.target.value)}
+                  placeholder="Distinguished academic leaders, steering committee members, and international co-chairs stewarding excellence in global technology innovation."
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Primary CTA Button Text</label>
+                <input
+                  type="text"
+                  value={sec.fields?.ctaText1 || ""}
+                  onChange={(e) => updateSectionField("committee", "ctaText1", e.target.value)}
+                  placeholder="View Full Committee"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Primary CTA Button Link</label>
+                <input
+                  type="text"
+                  value={sec.fields?.ctaLink1 || ""}
+                  onChange={(e) => updateSectionField("committee", "ctaLink1", e.target.value)}
+                  placeholder="/committee"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Committee Member Roster Manager */}
+            <div className="pt-6 border-t border-slate-100 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h4 className="font-bold text-slate-900 text-sm">
+                    Organizing Committee Members Roster ({committeeMembers.length} members)
+                  </h4>
+                  <p className="text-xs text-slate-500">
+                    Add, edit, reorder, and configure committee members displayed on the homepage and at /committee.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCreateMember}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer self-start sm:self-auto"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Committee Member</span>
+                </button>
+              </div>
+
+              {/* Edit / Add Member Drawer Box */}
+              {editingMember && (
+                <div className="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-4 animate-in fade-in">
+                  <div className="flex items-center justify-between pb-3 border-b border-indigo-200/80">
+                    <h5 className="font-bold text-indigo-950 text-sm">
+                      {isNewMember ? "Add New Committee Member" : `Edit Member: ${editingMember.name || editingMember.role}`}
+                    </h5>
+                    <button
+                      type="button"
+                      onClick={() => setEditingMember(null)}
+                      className="text-xs text-slate-500 hover:text-slate-800 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Full Name *</label>
+                      <input
+                        type="text"
+                        value={editingMember.name || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, name: e.target.value })}
+                        placeholder="e.g. Dr. Alistair Vance"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Committee Role *</label>
+                      <input
+                        type="text"
+                        value={editingMember.role || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, role: e.target.value })}
+                        placeholder="e.g. Conference Chair, Scientific Chair, Steering Committee"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Committee Group</label>
+                      <select
+                        value={editingMember.group || "Organizing committee"}
+                        onChange={(e) => setEditingMember({ ...editingMember, group: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      >
+                        <option value="Conference leadership">Conference leadership</option>
+                        <option value="Scientific committee">Scientific committee</option>
+                        <option value="Steering committee">Steering committee</option>
+                        <option value="Organizing committee">Organizing committee</option>
+                        <option value="Local organizing team">Local organizing team</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Institution / Affiliation</label>
+                      <input
+                        type="text"
+                        value={editingMember.affiliation || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, affiliation: e.target.value })}
+                        placeholder="e.g. International Technology Institute"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Country</label>
+                      <input
+                        type="text"
+                        value={editingMember.country || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, country: e.target.value })}
+                        placeholder="e.g. United Kingdom, UAE"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Areas of Expertise</label>
+                      <input
+                        type="text"
+                        value={editingMember.expertise || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, expertise: e.target.value })}
+                        placeholder="e.g. Global Tech Policy, Distributed AI"
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs font-medium focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Biography / Overview</label>
+                      <textarea
+                        rows={3}
+                        value={editingMember.bio || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, bio: e.target.value })}
+                        placeholder="Full academic biography and contributions..."
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="text-xs font-semibold text-slate-700">Photo URL / File path</label>
+                      <input
+                        type="text"
+                        value={editingMember.photo || ""}
+                        onChange={(e) => setEditingMember({ ...editingMember, photo: e.target.value })}
+                        placeholder="/uploads/committee/photo.png or https://..."
+                        className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 text-xs focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 flex flex-wrap gap-4 pt-2">
+                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={editingMember.published !== false}
+                          onChange={(e) => setEditingMember({ ...editingMember, published: e.target.checked })}
+                          className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span>Publish on website</span>
+                      </label>
+
+                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={!!editingMember.placeholder}
+                          onChange={(e) => setEditingMember({ ...editingMember, placeholder: e.target.checked })}
+                          className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        />
+                        <span>Placeholder profile — appointment not confirmed</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-indigo-200/80">
+                    <button
+                      type="button"
+                      onClick={() => setEditingMember(null)}
+                      className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveMember}
+                      className="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm transition cursor-pointer"
+                    >
+                      Save Member
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Members List */}
+              <div className="space-y-2.5">
+                {committeeMembers.map((member, idx) => {
+                  const isFirst = idx === 0;
+                  const isLast = idx === committeeMembers.length - 1;
+
+                  return (
+                    <div
+                      key={member.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/90 hover:bg-white hover:shadow-xs transition"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
+                          {member.photo ? (
+                            <img src={member.photo} alt={member.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span>{member.role ? member.role.slice(0, 2).toUpperCase() : "CM"}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h5 className="font-bold text-slate-900 text-xs sm:text-sm truncate">
+                              {member.name || member.role}
+                            </h5>
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">
+                              {member.role}
+                            </span>
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-200 text-slate-700">
+                              {member.group}
+                            </span>
+                            {member.placeholder && (
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
+                                Pending
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-500 truncate mt-0.5">
+                            {member.affiliation ? `${member.affiliation}, ${member.country}` : member.country}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+                        <button
+                          type="button"
+                          disabled={isFirst}
+                          onClick={() => moveCommitteeMember(idx, "up")}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 disabled:opacity-25 transition cursor-pointer"
+                          title="Move Up"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isLast}
+                          onClick={() => moveCommitteeMember(idx, "down")}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-indigo-600 hover:bg-slate-50 disabled:opacity-25 transition cursor-pointer"
+                          title="Move Down"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingMember(member);
+                            setIsNewMember(false);
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 text-xs font-semibold transition cursor-pointer"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteMember(member.id)}
+                          className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                          title="Delete member"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -1237,6 +2469,200 @@ export function ContentForm({
         );
       })()}
 
+      {/* TAB: PRICING & HOTEL ACCOMMODATION */}
+      {activeTab === "pricing" && (
+        <div className="rounded-2xl bg-white border border-slate-200 p-6 lg:p-8 shadow-sm space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-2 text-indigo-700 font-bold text-base">
+              <Coins className="w-5 h-5" />
+              <span>Registration &amp; Hotel Accommodation Pricing</span>
+            </div>
+            <span className="text-xs text-slate-500 font-medium">Multi-Currency Rates (EUR / USD / GBP)</span>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Pricing Tier Badge / Label</label>
+              <input
+                type="text"
+                value={pricingData.label || ""}
+                onChange={(e) => setPricingData({ ...pricingData, label: e.target.value })}
+                placeholder="e.g. Early-bird delegate rates"
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Pricing Conditions Note</label>
+              <textarea
+                rows={2}
+                value={pricingData.note || ""}
+                onChange={(e) => setPricingData({ ...pricingData, note: e.target.value })}
+                placeholder="All delegate tiers include digital proceedings and access to all hybrid tracks..."
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            {/* Delegate Tiers Grid */}
+            <div className="pt-4 border-t border-slate-100">
+              <h5 className="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3">
+                Delegate Registration Rates
+              </h5>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {(["student", "academic", "industry"] as const).map((category) => {
+                  const catTitle =
+                    category === "academic"
+                      ? "Academic Delegate"
+                      : category === "industry"
+                      ? "Industry Delegate"
+                      : "Student Delegate";
+
+                  return (
+                    <div key={category} className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-slate-900 text-xs">{catTitle}</span>
+                        <Tag className="w-3.5 h-3.5 text-indigo-500" />
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(["EUR", "USD", "GBP"] as const).map((curr) => (
+                          <div key={curr} className="space-y-1">
+                            <label className="text-[10px] font-bold text-slate-500">{curr}</label>
+                            <input
+                              type="number"
+                              min={0}
+                              step={1}
+                              value={pricingData[category]?.[curr] ?? 0}
+                              onChange={(e) =>
+                                setPricingData({
+                                  ...pricingData,
+                                  [category]: {
+                                    ...pricingData[category],
+                                    [curr]: Number(e.target.value)
+                                  }
+                                })
+                              }
+                              className="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-xs font-mono font-bold focus:outline-none focus:border-indigo-600"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Accommodation Grid */}
+            <div className="pt-4 border-t border-slate-100">
+              <h5 className="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3">
+                Hotel Accommodation Rates (Per Room / Night)
+              </h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(["single", "double"] as const).map((room) => {
+                  const roomTitle = room === "single" ? "Single Occupancy Room" : "Double / Twin Room";
+
+                  return (
+                    <div key={room} className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-3">
+                      <span className="font-bold text-slate-900 text-xs block">{roomTitle}</span>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(["EUR", "USD", "GBP"] as const).map((curr) => (
+                          <div key={curr} className="space-y-1">
+                            <label className="text-[10px] font-bold text-slate-500">{curr}</label>
+                            <input
+                              type="number"
+                              min={0}
+                              step={1}
+                              value={pricingData.accommodation?.[room]?.[curr] ?? 0}
+                              onChange={(e) =>
+                                setPricingData({
+                                  ...pricingData,
+                                  accommodation: {
+                                    ...pricingData.accommodation,
+                                    [room]: {
+                                      ...pricingData.accommodation[room],
+                                      [curr]: Number(e.target.value)
+                                    }
+                                  }
+                                })
+                              }
+                              className="w-full px-2 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-xs font-mono font-bold focus:outline-none focus:border-indigo-600"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB: ABSTRACT SUBMISSION RULES */}
+      {activeTab === "abstract" && (
+        <div className="rounded-2xl bg-white border border-slate-200 p-6 lg:p-8 shadow-sm space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-2 text-indigo-700 font-bold text-base">
+              <FileCheck className="w-5 h-5" />
+              <span>Abstract Submission Guidelines &amp; Constraints</span>
+            </div>
+            <a href="/abstracts" target="_blank" className="text-xs font-semibold text-indigo-600 hover:underline">
+              Preview Form ↗
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Minimum Abstract Words</label>
+              <input
+                type="number"
+                min={50}
+                max={5000}
+                value={abstractData.minWords ?? 250}
+                onChange={(e) => setAbstractData({ ...abstractData, minWords: Number(e.target.value) })}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Maximum Abstract Words</label>
+              <input
+                type="number"
+                min={100}
+                max={10000}
+                value={abstractData.maxWords ?? 500}
+                onChange={(e) => setAbstractData({ ...abstractData, maxWords: Number(e.target.value) })}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Maximum Upload File Size (MB)</label>
+              <input
+                type="number"
+                min={1}
+                max={50}
+                value={abstractData.maxFileMB ?? 5}
+                onChange={(e) => setAbstractData({ ...abstractData, maxFileMB: Number(e.target.value) })}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div className="md:col-span-3 space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Review Guidelines Note</label>
+              <textarea
+                rows={3}
+                value={abstractData.guidelinesNote || ""}
+                onChange={(e) => setAbstractData({ ...abstractData, guidelinesNote: e.target.value })}
+                placeholder="Guidelines displayed to authors submitting abstracts..."
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TAB 6: VENUE (WITH GOOGLE MAP LOCATION LINK / SEARCH QUERY ACCESSIBILITY) */}
       {activeTab === "venue" && (() => {
         const sec = getSection("venue");
@@ -1400,6 +2826,52 @@ export function ContentForm({
           </div>
         );
       })()}
+
+      {/* TAB: POLICIES & TERMS */}
+      {activeTab === "policies" && (
+        <div className="rounded-2xl bg-white border border-slate-200 p-6 lg:p-8 shadow-sm space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="flex items-center gap-2 text-indigo-700 font-bold text-base">
+              <Shield className="w-5 h-5" />
+              <span>Policies, Privacy &amp; Legal Terms</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <a href="/privacy" target="_blank" className="text-xs font-semibold text-indigo-600 hover:underline">
+                View /privacy ↗
+              </a>
+              <a href="/terms" target="_blank" className="text-xs font-semibold text-indigo-600 hover:underline">
+                View /terms ↗
+              </a>
+            </div>
+          </div>
+
+          <div className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Privacy Notice / Policy</label>
+              <textarea
+                rows={7}
+                value={policiesData.privacy || ""}
+                onChange={(e) => setPoliciesData({ ...policiesData, privacy: e.target.value })}
+                placeholder="Full text of privacy notice..."
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">
+                Registration &amp; Abstract Submission Terms &amp; Conditions
+              </label>
+              <textarea
+                rows={7}
+                value={policiesData.terms || ""}
+                onChange={(e) => setPoliciesData({ ...policiesData, terms: e.target.value })}
+                placeholder="Full text of conference terms and participant conditions..."
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-indigo-600"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TAB 8: FOOTER (FULL ACCESS: QUICK LINKS, RESOURCE LINKS, CONTACTS & COPYRIGHT) */}
       {activeTab === "footer" && (

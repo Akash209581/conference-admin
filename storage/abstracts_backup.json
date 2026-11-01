@@ -1,0 +1,166 @@
+[
+  {
+    "id": "ABS-2026-108291",
+    "referenceNumber": "ABS-2026-108291",
+    "name": "Dr. Alexander Morgan",
+    "first": "Alexander",
+    "last": "Morgan",
+    "email": "alexander.morgan@oxford-research.ac.uk",
+    "number": "+44 7911 123456",
+    "phone": "+44 7911 123456",
+    "institution": "University of Oxford",
+    "country": "United Kingdom",
+    "title": "Self-Supervised Representation Learning for Multimodal Agentic Systems",
+    "track": "Artificial Intelligence & Autonomous Systems",
+    "presentationPreference": "Oral presentation",
+    "fileName": "multimodal_agentic_learning_oxford.pdf",
+    "fileSize": 2451900,
+    "status": "ACCEPTED",
+    "abstractText": "This research presents a novel foundational representation learning paradigm for autonomous multimodal agent networks. By optimizing latent alignment across text, sensory streams, and causal reasoning trees, our model demonstrates a 34% reduction in inference latency while maintaining state-of-the-art decision fidelity under noisy real-world conditions.",
+    "coAuthors": [
+      {
+        "name": "Dr. Samantha Reed",
+        "affiliation": "Alan Turing Institute"
+      },
+      {
+        "name": "Prof. David K. Miller",
+        "affiliation": "University of Cambridge"
+      }
+    ],
+    "submittedAt": "2026-10-24T14:32:00.000Z"
+  },
+  {
+    "id": "ABS-2026-219483",
+    "referenceNumber": "ABS-2026-219483",
+    "name": "Prof. Hiroshi Tanaka",
+    "first": "Hiroshi",
+    "last": "Tanaka",
+    "email": "h-tanaka@u-tokyo.ac.jp",
+    "number": "+81 90 1234 5678",
+    "phone": "+81 90 1234 5678",
+    "institution": "The University of Tokyo",
+    "country": "Japan",
+    "title": "Zero-Latency Edge Orchestration in Heterogeneous Multi-Cloud Environments",
+    "track": "Cloud Architectures & Distributed Systems",
+    "presentationPreference": "Oral presentation",
+    "fileName": "edge_cloud_orchestration_tanaka.docx",
+    "fileSize": 1840200,
+    "status": "UNDER_REVIEW",
+    "abstractText": "Modern distributed edge environments suffer from network jitter and heterogeneous compute capabilities. We present a decentralized scheduling heuristic that autonomously balances compute workloads across Kubernetes clusters deployed at 5G cell tower boundaries, achieving sub-4ms tail latency for industrial robotics workloads.",
+    "coAuthors": [
+      {
+        "name": "Kenji Sato",
+        "affiliation": "NTT Communications Labs"
+      }
+    ],
+    "submittedAt": "2026-10-26T09:15:00.000Z"
+  },
+  {
+    "id": "ABS-2026-348201",
+    "referenceNumber": "ABS-2026-348201",
+    "name": "Dr. Fatima Al-Zahra",
+    "first": "Fatima",
+    "last": "Al-Zahra",
+    "email": "fatima.alzahra@ku.ac.ae",
+    "number": "+971 50 876 5432",
+    "phone": "+971 50 876 5432",
+    "institution": "Khalifa University",
+    "country": "United Arab Emirates",
+    "title": "Lattice-Based Post-Quantum Key Exchange for Critical Financial Infrastructure",
+    "track": "Cybersecurity, Zero Trust & Cryptography",
+    "presentationPreference": "Oral presentation",
+    "fileName": "post_quantum_lattice_ku.pdf",
+    "fileSize": 3120000,
+    "status": "ACCEPTED",
+    "abstractText": "With the acceleration of quantum computing milestones, classical public key cryptography is increasingly vulnerable. We benchmark an efficient variant of the Module Learning With Errors (M-LWE) protocol optimized for high-throughput interbank settlements, proving resilience against quantum adversaries without increasing transaction latency.",
+    "coAuthors": [
+      {
+        "name": "Dr. Tariq Mansoor",
+        "affiliation": "Dubai Cyber Security Centre"
+      }
+    ],
+    "submittedAt": "2026-10-27T11:45:00.000Z"
+  },
+  {
+    "id": "ABS-2026-489102",
+    "referenceNumber": "ABS-2026-489102",
+    "name": "Elena Rostova",
+    "first": "Elena",
+    "last": "Rostova",
+    "email": "elena.rostova@ethz.ch",
+    "number": "+41 78 987 6543",
+    "phone": "+41 78 987 6543",
+    "institution": "ETH Zurich",
+    "country": "Switzerland",
+    "title": "Automated Diagnostic Assessment of Early-Stage Retinal Pathologies via Deep Ensembles",
+    "track": "Biomedical Engineering & Digital Health",
+    "presentationPreference": "Poster presentation",
+    "fileName": "retinal_pathology_deep_ensembles.pdf",
+    "fileSize": 4210000,
+    "status": "SUBMITTED",
+    "abstractText": "Accurate detection of diabetic retinopathy and macular edema in low-resource clinics requires robust AI that quantifies uncertainty. Our work evaluates a self-calibrating ensemble of vision transformers tested on over 140,000 clinical fundus scans, yielding 98.4% diagnostic sensitivity and calibrated confidence bounds.",
+    "coAuthors": [
+      {
+        "name": "Dr. Lukas Meier",
+        "affiliation": "University Hospital Zurich"
+      },
+      {
+        "name": "Dr. Anna Keller",
+        "affiliation": "Roche Diagnostics"
+      }
+    ],
+    "submittedAt": "2026-10-28T16:20:00.000Z"
+  },
+  {
+    "id": "ABS-2026-590123",
+    "referenceNumber": "ABS-2026-590123",
+    "name": "Prof. Marcus Chen",
+    "first": "Marcus",
+    "last": "Chen",
+    "email": "marcus.chen@nus.edu.sg",
+    "number": "+65 9123 4567",
+    "phone": "+65 9123 4567",
+    "institution": "National University of Singapore",
+    "country": "Singapore",
+    "title": "Microgrid Energy Optimization through Decentralized Multi-Agent Reinforcement Learning",
+    "track": "Sustainable Energy & Smart Urban Mobility",
+    "presentationPreference": "Oral presentation",
+    "fileName": "microgrid_marl_optimization_nus.pdf",
+    "fileSize": 2890000,
+    "status": "ACCEPTED",
+    "abstractText": "Urban microgrids incorporating residential solar arrays and fleet EV chargers experience extreme demand fluctuation. We propose a decentralized Multi-Agent Reinforcement Learning (MARL) control policy where battery storage units dynamically arbitrage energy tariffs and frequency reserves, reducing carbon emissions by 28%.",
+    "coAuthors": [
+      {
+        "name": "Wei Lin",
+        "affiliation": "Singapore Energy Authority"
+      }
+    ],
+    "submittedAt": "2026-10-29T08:05:00.000Z"
+  },
+  {
+    "id": "ABS-2026-671234",
+    "referenceNumber": "ABS-2026-671234",
+    "name": "Dr. Amara Okafor",
+    "first": "Amara",
+    "last": "Okafor",
+    "email": "amara.okafor@utoronto.ca",
+    "number": "+1 416 555 0192",
+    "phone": "+1 416 555 0192",
+    "institution": "University of Toronto",
+    "country": "Canada",
+    "title": "Algorithmic Liquidity Provision and Risk Mitigation in Cross-Border Digital Currencies",
+    "track": "FinTech, Blockchain & Digital Economy",
+    "presentationPreference": "Poster presentation",
+    "fileName": "cbdc_liquidity_risk_okafor.docx",
+    "fileSize": 1530000,
+    "status": "SUBMITTED",
+    "abstractText": "Central Bank Digital Currencies (CBDCs) and cross-border settlement channels require real-time liquidity management against FX volatility. This paper formulates an automated market-making mechanism with asymmetric inventory fees that reduces slippage by 41% across simulated foreign exchange remittance corridors.",
+    "coAuthors": [
+      {
+        "name": "Prof. Robert Tremblay",
+        "affiliation": "Rotman School of Management"
+      }
+    ],
+    "submittedAt": "2026-10-30T13:40:00.000Z"
+  }
+]
