@@ -75,6 +75,13 @@ export default async function ContentEditorPage({
   const brandingVal = (brandingSetting?.value as any) || localSettings?.branding || {};
   const themeTokens = (activeTheme?.tokens as any) || {};
   const initialFaviconUrl = brandingVal.faviconUrl || themeTokens.faviconUrl || "/favicon.ico";
+  const initialBranding = {
+    logoUrl: brandingVal.logoUrl || "",
+    logoText: brandingVal.logoText || "ICGIT",
+    brandName: brandingVal.brandName || conference?.name || "ICGIT 2026",
+    brandSubtitle: brandingVal.brandSubtitle || "GLOBAL INNOVATION & TECHNOLOGY",
+    faviconUrl: initialFaviconUrl
+  };
 
   const initialSections = (homeSetting?.value as any) || localSettings?.sections || [];
   const initialNavbar = (navSetting?.value as any) || localSettings?.navigation || [
@@ -162,6 +169,7 @@ export default async function ContentEditorPage({
         initialFooter={initialFooter}
         initialSpeakers={initialSpeakers}
         initialFaviconUrl={initialFaviconUrl}
+        initialBranding={initialBranding}
         initialNavbar={initialNavbar}
         initialCommittee={initialCommittee}
         initialTracks={initialTracks}

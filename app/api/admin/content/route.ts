@@ -16,7 +16,8 @@ export async function POST(request: Request) {
       pricing,
       abstractSettings,
       policies,
-      faviconUrl
+      faviconUrl,
+      branding
     } = await request.json();
 
     let targetConfId = conferenceId;
@@ -184,12 +185,17 @@ export async function POST(request: Request) {
           });
         }
 
-        // Save faviconUrl if provided
-        if (faviconUrl !== undefined) {
+        // Save branding / faviconUrl if provided
+        if (branding || faviconUrl !== undefined) {
           const existingBranding = await prisma.systemSetting.findFirst({
             where: { conferenceId: targetConfId, key: "branding_assets" }
           });
           const currentBrandingVal = (existingBranding?.value as Record<string, any>) || {};
+          const mergedBranding = {
+            ...currentBrandingVal,
+            ...(branding || {}),
+            ...(faviconUrl !== undefined ? { faviconUrl } : {})
+          };
 
           await prisma.systemSetting.upsert({
             where: {
@@ -199,18 +205,12 @@ export async function POST(request: Request) {
               }
             },
             update: {
-              value: {
-                ...currentBrandingVal,
-                faviconUrl
-              }
+              value: mergedBranding
             },
             create: {
               conferenceId: targetConfId,
               key: "branding_assets",
-              value: {
-                ...currentBrandingVal,
-                faviconUrl
-              }
+              value: mergedBranding
             }
           });
 
@@ -225,7 +225,8 @@ export async function POST(request: Request) {
               data: {
                 tokens: {
                   ...tokens,
-                  faviconUrl
+                  ...(faviconUrl !== undefined ? { faviconUrl } : {}),
+                  ...(branding?.logoUrl ? { logoUrl: branding.logoUrl } : {})
                 }
               }
             });
@@ -303,8 +304,12 @@ export async function POST(request: Request) {
             current.abstractSettings = abstractSettings;
           }
           if (policies) current.policies = policies;
-          if (faviconUrl !== undefined) {
-            current.branding = { ...(current.branding || {}), faviconUrl };
+          if (branding || faviconUrl !== undefined) {
+            current.branding = {
+              ...(current.branding || {}),
+              ...(branding || {}),
+              ...(faviconUrl !== undefined ? { faviconUrl } : {})
+            };
           }
           current.updatedAt = new Date().toISOString();
 

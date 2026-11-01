@@ -234,7 +234,7 @@
         "badge": "DECEMBER 8–10, 2026 • DUBAI, UAE",
         "title": "50 TH INTERNATIONAL CONFERENCE",
         "titleColor": "Global Innovation & Technology",
-        "description": "Bringing together 2,000+ visionaries, researchers, and industry leaders from 80+ countries to shape the future of global innovation and emerging technologies.",
+        "description": "Theme: The Global Intersection of Science, Tech, and Impact",
         "heroVenue": "Dubai World Trade Centre, Dubai",
         "heroDates": "December 8–10, 2026",
         "heroMode": "Hybrid Event",
@@ -263,9 +263,26 @@
         "badge": "About the Conference",
         "title": "Pioneering the Next Era of",
         "titleColor": "Technological Breakthroughs",
-        "paragraph1": "The International Conference on Global Innovation and Technology brings together leading academic scientists, researchers, and scholars to exchange and share their experiences and research results.",
-        "paragraph2": "It also provides a premier interdisciplinary platform for researchers, practitioners, and educators to present and discuss the most recent innovations, trends, and concerns.",
-        "aboutImage": "/about_banner.avif"
+        "paragraph1": "The International Conference on Global Innovation and Technology brings together leading academic scientists, researchers, and scholars to exchange and share their experiences and research results on all aspects of Technology and Innovation.\n\nIt also provides a premier interdisciplinary platform for researchers, practitioners, and educators to present and discuss the most recent innovations, trends, and concerns as well as practical challenges encountered.",
+        "aboutImage": "/about_banner.avif",
+        "aboutVenueCaption": "📍 Dubai World Trade Centre, Dubai",
+        "milestonesTitle": "Key Milestones & Dates",
+        "m1_title": "Abstract Submission Opens",
+        "m1_date": "July 15, 2026",
+        "m1_status": "Open",
+        "m2_title": "Abstract Submission Deadline",
+        "m2_date": "October 1, 2026",
+        "m2_status": "Upcoming",
+        "m3_title": "Acceptance Notification",
+        "m3_date": "November 1, 2026",
+        "m3_status": "Upcoming",
+        "m4_title": "Camera Ready Deadline",
+        "m4_date": "November 15, 2026",
+        "m4_status": "Upcoming",
+        "stat1Number": "4",
+        "stat1Label": "RESEARCH TRACKS",
+        "stat2Number": "4+",
+        "stat2Label": "KEYNOTE SPEAKERS"
       }
     },
     {
@@ -323,5 +340,12 @@
         "description": "Questions on registration, submission, or corporate sponsorship? Send us an inquiry below and our conference committee will assist you promptly."
       }
     }
-  ]
+  ],
+  "branding": {
+    "logoUrl": "",
+    "logoText": "ICGIT",
+    "brandName": "ICGIT 2026",
+    "brandSubtitle": "GLOBAL INNOVATION & TECHNOLOGY",
+    "faviconUrl": "/favicon.ico"
+  }
 }

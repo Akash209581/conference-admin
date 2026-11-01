@@ -141,6 +141,14 @@ export interface PolicySettings {
   terms: string;
 }
 
+export interface BrandingSettings {
+  logoUrl?: string;
+  logoText?: string;
+  brandName?: string;
+  brandSubtitle?: string;
+  faviconUrl?: string;
+}
+
 export const DEFAULT_COMMITTEE: CommitteeMemberItem[] = [
   {
     id: "chair",
@@ -286,6 +294,7 @@ export const DEFAULT_POLICIES: PolicySettings = {
 
 interface ContentFormProps {
   initialFaviconUrl?: string;
+  initialBranding?: BrandingSettings;
   conferenceId: string;
   slug: string;
   initialSections: SectionItem[];
@@ -320,11 +329,14 @@ const DEFAULT_SECTIONS: SectionItem[] = [
       badge: "DECEMBER 8–10, 2026 • DUBAI, UAE",
       title: "50 TH INTERNATIONAL CONFERENCE",
       titleColor: "Global Innovation & Technology",
-      description: "Bringing together 2,000+ visionaries, researchers, and industry leaders from 80+ countries to shape the future of global innovation and emerging technologies.",
+      description: "Theme: The Global Intersection of Science, Tech, and Impact",
       heroVenue: "Dubai World Trade Centre, Dubai",
       heroDates: "December 8–10, 2026",
       heroMode: "Hybrid Event",
+      ctaText1: "Submit Abstract",
+      ctaLink1: "/abstracts",
       ctaText2: "Register Now",
+      ctaLink2: "/registration",
       heroImage: ""
     }
   },
@@ -346,8 +358,26 @@ const DEFAULT_SECTIONS: SectionItem[] = [
       badge: "About the Conference",
       title: "Pioneering the Next Era of",
       titleColor: "Technological Breakthroughs",
-      paragraph1: "The International Conference on Global Innovation and Technology brings together leading academic scientists, researchers, and scholars to exchange and share their experiences and research results.",
-      paragraph2: "It also provides a premier interdisciplinary platform for researchers, practitioners, and educators to present and discuss the most recent innovations, trends, and concerns."
+      paragraph1: "The International Conference on Global Innovation and Technology brings together leading academic scientists, researchers, and scholars to exchange and share their experiences and research results on all aspects of Technology and Innovation.\n\nIt also provides a premier interdisciplinary platform for researchers, practitioners, and educators to present and discuss the most recent innovations, trends, and concerns as well as practical challenges encountered.",
+      aboutImage: "/about_banner.avif",
+      aboutVenueCaption: "📍 Dubai World Trade Centre, Dubai",
+      milestonesTitle: "Key Milestones & Dates",
+      m1_title: "Abstract Submission Opens",
+      m1_date: "July 15, 2026",
+      m1_status: "Open",
+      m2_title: "Abstract Submission Deadline",
+      m2_date: "October 1, 2026",
+      m2_status: "Upcoming",
+      m3_title: "Acceptance Notification",
+      m3_date: "November 1, 2026",
+      m3_status: "Upcoming",
+      m4_title: "Camera Ready Deadline",
+      m4_date: "November 15, 2026",
+      m4_status: "Upcoming",
+      stat1Number: "4",
+      stat1Label: "RESEARCH TRACKS",
+      stat2Number: "4+",
+      stat2Label: "KEYNOTE SPEAKERS"
     }
   },
   {
@@ -417,14 +447,24 @@ function buildMergedSections(initial: SectionItem[]): SectionItem[] {
   for (const def of DEFAULT_SECTIONS) {
     const existing = initial.find((s) => s.id === def.id);
     if (existing) {
+      const mergedFields = {
+        ...def.fields,
+        ...(existing.fields || {})
+      };
+
+      if (def.id === "about" && existing.fields?.paragraph2) {
+        const p1 = existing.fields.paragraph1 || "";
+        const p2 = existing.fields.paragraph2;
+        if (!p1.includes(p2)) {
+          mergedFields.paragraph1 = p1 ? `${p1}\n\n${p2}` : p2;
+        }
+      }
+
       result.push({
         ...def,
         ...existing,
         visible: existing.visible !== undefined ? existing.visible : def.visible,
-        fields: {
-          ...def.fields,
-          ...(existing.fields || {})
-        }
+        fields: mergedFields
       });
     } else {
       result.push(def);
@@ -447,6 +487,7 @@ export function ContentForm({
   initialFooter,
   initialSpeakers = [],
   initialFaviconUrl = "/favicon.ico",
+  initialBranding,
   initialNavbar,
   initialCommittee,
   initialTracks,
@@ -455,6 +496,16 @@ export function ContentForm({
   initialPolicies
 }: ContentFormProps) {
   const [sections, setSections] = useState<SectionItem[]>(() => buildMergedSections(initialSections));
+
+  const [brandingData, setBrandingData] = useState<BrandingSettings>(() => ({
+    logoUrl: initialBranding?.logoUrl || "",
+    logoText: initialBranding?.logoText || "ICGIT",
+    brandName: initialBranding?.brandName || "ICGIT 2026",
+    brandSubtitle: initialBranding?.brandSubtitle || "GLOBAL INNOVATION & TECHNOLOGY",
+    faviconUrl: initialFaviconUrl || initialBranding?.faviconUrl || "/favicon.ico"
+  }));
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingAboutImage, setUploadingAboutImage] = useState(false);
 
   const [navbarItems, setNavbarItems] = useState<LinkItem[]>(() => {
     if (initialNavbar && Array.isArray(initialNavbar) && initialNavbar.length > 0) {
@@ -753,6 +804,60 @@ export function ContentForm({
     );
   };
 
+  const handleBrandLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingLogo(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("folder", "branding");
+
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
+        method: "POST",
+        body: data
+      });
+
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "Logo upload failed");
+      }
+
+      setBrandingData((prev) => ({ ...prev, logoUrl: res.data!.url }));
+      toast.success("Brand logo uploaded successfully!", "Upload Complete");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload logo", "Upload Error");
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleAboutImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAboutImage(true);
+    try {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("folder", "about");
+
+      const res = await safeFetchJson<{ url: string }>("/conference-admin/api/admin/upload", {
+        method: "POST",
+        body: data
+      });
+
+      if (!res.ok || !res.data) {
+        throw new Error(res.error || "About banner upload failed");
+      }
+
+      updateSectionField("about", "aboutImage", res.data.url);
+      toast.success("About banner image uploaded successfully!", "Upload Complete");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload banner image", "Upload Error");
+    } finally {
+      setUploadingAboutImage(false);
+    }
+  };
+
   const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -1011,7 +1116,11 @@ export function ContentForm({
           pricing: pricingData,
           abstractSettings: abstractData,
           policies: policiesData,
-          faviconUrl
+          faviconUrl,
+          branding: {
+            ...brandingData,
+            faviconUrl
+          }
         })
       });
 
@@ -1108,6 +1217,104 @@ export function ContentForm({
             </div>
           </div>
 
+          {/* Header Brand Identity & Logo Card */}
+          <div className="p-5 rounded-2xl bg-indigo-50/50 border border-indigo-100 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+                <Sparkles className="w-4 h-4 text-indigo-600" />
+                <span>Header Navbar Branding &amp; Logo (Image &amp; Text)</span>
+              </div>
+              <span className="text-[11px] font-semibold text-indigo-600 bg-white px-2.5 py-1 rounded-lg border border-indigo-200 shadow-2xs">
+                Navbar Brand Identity
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Logo Box */}
+              <div className="md:col-span-2 space-y-2">
+                <label className="text-xs font-semibold text-slate-700 flex items-center justify-between">
+                  <span>Brand Logo Image (Square / Icon)</span>
+                  {brandingData.logoUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setBrandingData((prev) => ({ ...prev, logoUrl: "" }))}
+                      className="text-[11px] text-rose-600 hover:underline cursor-pointer"
+                    >
+                      Remove Logo &amp; Use Text Badge
+                    </button>
+                  )}
+                </label>
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-md shadow-violet-600/20 overflow-hidden">
+                    {brandingData.logoUrl ? (
+                      <img
+                        src={brandingData.logoUrl}
+                        alt="Logo preview"
+                        className="w-full h-full object-contain"
+                        onError={(e) => ((e.target as HTMLElement).style.display = "none")}
+                      />
+                    ) : (
+                      <span>{brandingData.logoText || "ICGIT"}</span>
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={brandingData.logoUrl || ""}
+                    onChange={(e) => setBrandingData((prev) => ({ ...prev, logoUrl: e.target.value }))}
+                    placeholder="/uploads/branding/logo.png or https://..."
+                    className="flex-1 w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                  />
+                  <label className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold cursor-pointer shadow-sm shrink-0 transition-all">
+                    {uploadingLogo ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Upload className="w-4 h-4" />}
+                    <span>Upload Logo Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBrandLogoUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Logo Icon Text */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Logo Text (Fallback badge text if no image)</label>
+                <input
+                  type="text"
+                  value={brandingData.logoText || ""}
+                  onChange={(e) => setBrandingData((prev) => ({ ...prev, logoText: e.target.value }))}
+                  placeholder="ICGIT"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                />
+              </div>
+
+              {/* Brand Title */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Brand Title (Heading)</label>
+                <input
+                  type="text"
+                  value={brandingData.brandName || ""}
+                  onChange={(e) => setBrandingData((prev) => ({ ...prev, brandName: e.target.value }))}
+                  placeholder="ICGIT 2026"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm font-semibold placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                />
+              </div>
+
+              {/* Brand Subtitle */}
+              <div className="md:col-span-2 space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700">Brand Subtitle (Upper Tagline)</label>
+                <input
+                  type="text"
+                  value={brandingData.brandSubtitle || ""}
+                  onChange={(e) => setBrandingData((prev) => ({ ...prev, brandSubtitle: e.target.value }))}
+                  placeholder="GLOBAL INNOVATION & TECHNOLOGY"
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm uppercase placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Quick-Add Presets */}
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
             <div className="flex items-center justify-between">
@@ -1157,10 +1364,24 @@ export function ContentForm({
               <span>{navbarItems.length} Links Active</span>
             </div>
             <div className="flex items-center gap-2 overflow-x-auto py-2 px-1">
-              <span className="px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 font-bold text-xs shrink-0">
-                ICGIT 2026
-              </span>
-              <div className="h-4 w-px bg-slate-700 shrink-0 mx-1" />
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-violet-600 to-indigo-600 text-white font-bold text-[10px] flex items-center justify-center overflow-hidden shadow-sm">
+                  {brandingData.logoUrl ? (
+                    <img src={brandingData.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                  ) : (
+                    <span>{brandingData.logoText || "ICGIT"}</span>
+                  )}
+                </div>
+                <div>
+                  <span className="block font-bold text-xs text-white leading-tight">
+                    {brandingData.brandName || "ICGIT 2026"}
+                  </span>
+                  <span className="block text-[8px] font-semibold text-slate-400 uppercase tracking-wider leading-tight">
+                    {brandingData.brandSubtitle || "GLOBAL INNOVATION & TECHNOLOGY"}
+                  </span>
+                </div>
+              </div>
+              <div className="h-5 w-px bg-slate-700 shrink-0 mx-1" />
               {navbarItems.map((item, idx) => (
                 <span
                   key={`preview-${idx}`}
@@ -1335,14 +1556,17 @@ export function ContentForm({
               </div>
 
               <div className="md:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Description Paragraph</label>
+                <label className="text-xs font-semibold text-slate-700">Theme</label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={sec.fields?.description || ""}
                   onChange={(e) => updateSectionField("hero", "description", e.target.value)}
-                  placeholder="Bringing together 2,000+ visionaries, researchers..."
+                  placeholder="e.g. Theme: The Global Intersection of Science, Tech, and Impact"
                   className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
                 />
+                <p className="text-[11px] text-slate-500">
+                  Sets the conference theme/description shown directly below the hero title on the homepage.
+                </p>
               </div>
 
               <div className="space-y-1.5">
@@ -1378,15 +1602,60 @@ export function ContentForm({
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Register CTA Button Text</label>
-                <input
-                  type="text"
-                  value={sec.fields?.ctaText2 || ""}
-                  onChange={(e) => updateSectionField("hero", "ctaText2", e.target.value)}
-                  placeholder="Register Now"
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
-                />
+              {/* Button 1 (Abstract Button - First) */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-800">Button 1 (Abstract Button)</span>
+                  <span className="text-[10px] uppercase font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Shown First</span>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-slate-600">Button 1 Text</label>
+                  <input
+                    type="text"
+                    value={sec.fields?.ctaText1 !== undefined ? sec.fields.ctaText1 : "Submit Abstract"}
+                    onChange={(e) => updateSectionField("hero", "ctaText1", e.target.value)}
+                    placeholder="Submit Abstract"
+                    className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100 transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-slate-600">Button 1 Link / Target</label>
+                  <input
+                    type="text"
+                    value={sec.fields?.ctaLink1 !== undefined ? sec.fields.ctaLink1 : "/abstracts"}
+                    onChange={(e) => updateSectionField("hero", "ctaLink1", e.target.value)}
+                    placeholder="/abstracts"
+                    className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm font-mono placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100 transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Button 2 (Register Button - Second) */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-800">Button 2 (Register Button)</span>
+                  <span className="text-[10px] uppercase font-semibold text-slate-600 bg-slate-200/70 px-2 py-0.5 rounded border border-slate-200">Shown Second</span>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-slate-600">Button 2 Text</label>
+                  <input
+                    type="text"
+                    value={sec.fields?.ctaText2 !== undefined ? sec.fields.ctaText2 : "Register Now"}
+                    onChange={(e) => updateSectionField("hero", "ctaText2", e.target.value)}
+                    placeholder="Register Now"
+                    className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100 transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[11px] font-semibold text-slate-600">Button 2 Link / Target</label>
+                  <input
+                    type="text"
+                    value={sec.fields?.ctaLink2 !== undefined ? sec.fields.ctaLink2 : "/registration"}
+                    onChange={(e) => updateSectionField("hero", "ctaLink2", e.target.value)}
+                    placeholder="/registration"
+                    className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm font-mono placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100 transition-all"
+                  />
+                </div>
               </div>
 
               {/* Hero Image Field */}
@@ -1574,26 +1843,200 @@ export function ContentForm({
                 />
               </div>
 
+              {/* Single unified textarea for multi-paragraph about description */}
               <div className="md:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Paragraph 1</label>
+                <label className="text-xs font-semibold text-slate-700">About Content (Multiple Paragraphs Supported)</label>
                 <textarea
-                  rows={3}
+                  rows={8}
                   value={sec.fields?.paragraph1 || ""}
-                  onChange={(e) => updateSectionField("about", "paragraph1", e.target.value)}
-                  placeholder="Detailed overview..."
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
+                  onChange={(e) => {
+                    updateSectionField("about", "paragraph1", e.target.value);
+                    updateSectionField("about", "paragraph2", "");
+                  }}
+                  placeholder="Write your conference description here. Separate paragraphs with an empty line. Spacing and paragraph structure are preserved exactly on the live website..."
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all leading-relaxed"
                 />
+                <p className="text-[11px] text-slate-500">
+                  Write freely in this single box. Any empty line between text creates a separate paragraph formatted cleanly on the public website.
+                </p>
               </div>
 
-              <div className="md:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700">Paragraph 2</label>
-                <textarea
-                  rows={3}
-                  value={sec.fields?.paragraph2 || ""}
-                  onChange={(e) => updateSectionField("about", "paragraph2", e.target.value)}
-                  placeholder="Additional event details..."
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-100 transition-all"
-                />
+              {/* About Venue Banner & Location Caption */}
+              <div className="md:col-span-2 p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider">
+                    <MapPin className="w-4 h-4 text-indigo-600" />
+                    <span>About Section Venue Banner &amp; Location Tag</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-medium">Shown below about text</span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-xs font-semibold text-slate-700">Venue Banner Image</label>
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <input
+                        type="text"
+                        value={sec.fields?.aboutImage || ""}
+                        onChange={(e) => updateSectionField("about", "aboutImage", e.target.value)}
+                        placeholder="/about_banner.avif or /uploads/about/... or https://..."
+                        className="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                      />
+                      <label className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold cursor-pointer shadow-sm shrink-0 transition-all">
+                        {uploadingAboutImage ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Upload className="w-4 h-4" />}
+                        <span>Upload Banner Image</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAboutImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2 space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-700">Venue Location Overlay Tag</label>
+                    <input
+                      type="text"
+                      value={sec.fields?.aboutVenueCaption || ""}
+                      onChange={(e) => updateSectionField("about", "aboutVenueCaption", e.target.value)}
+                      placeholder="📍 Dubai World Trade Centre, Dubai"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Milestones & Dates Section */}
+              <div className="md:col-span-2 p-5 rounded-2xl bg-indigo-50/40 border border-indigo-100 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-indigo-900 font-bold text-xs uppercase tracking-wider">
+                    <CalendarDays className="w-4 h-4 text-indigo-600" />
+                    <span>Key Milestones &amp; Important Dates Card</span>
+                  </div>
+                  <span className="text-[10px] font-semibold text-indigo-600 bg-white px-2 py-0.5 rounded border border-indigo-200">
+                    Right Column
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-700">Milestones Card Heading Title</label>
+                  <input
+                    type="text"
+                    value={sec.fields?.milestonesTitle !== undefined ? sec.fields.milestonesTitle : "Key Milestones & Dates"}
+                    onChange={(e) => updateSectionField("about", "milestonesTitle", e.target.value)}
+                    placeholder="Key Milestones & Dates"
+                    className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm font-semibold placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-100"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                  {[
+                    { key: "m1", defaultTitle: "Abstract Submission Opens", defaultDate: "July 15, 2026", defaultStatus: "Open" },
+                    { key: "m2", defaultTitle: "Abstract Submission Deadline", defaultDate: "October 1, 2026", defaultStatus: "Upcoming" },
+                    { key: "m3", defaultTitle: "Acceptance Notification", defaultDate: "November 1, 2026", defaultStatus: "Upcoming" },
+                    { key: "m4", defaultTitle: "Camera Ready Deadline", defaultDate: "November 15, 2026", defaultStatus: "Upcoming" }
+                  ].map((m, idx) => (
+                    <div key={m.key} className="p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs space-y-2">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
+                        <span>Milestone #{idx + 1}</span>
+                        <input
+                          type="text"
+                          value={sec.fields?.[`${m.key}_status`] !== undefined ? sec.fields[`${m.key}_status`] : m.defaultStatus}
+                          onChange={(e) => updateSectionField("about", `${m.key}_status`, e.target.value)}
+                          placeholder="e.g. Open / Upcoming"
+                          className="w-24 px-2 py-0.5 text-[11px] font-bold text-right bg-slate-50 border border-slate-200 rounded text-indigo-700 focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-medium text-slate-500">Title</label>
+                        <input
+                          type="text"
+                          value={sec.fields?.[`${m.key}_title`] !== undefined ? sec.fields[`${m.key}_title`] : m.defaultTitle}
+                          onChange={(e) => updateSectionField("about", `${m.key}_title`, e.target.value)}
+                          placeholder={m.defaultTitle}
+                          className="w-full px-2.5 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-md text-slate-800 focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-medium text-slate-500">Date Display</label>
+                        <input
+                          type="text"
+                          value={sec.fields?.[`${m.key}_date`] !== undefined ? sec.fields[`${m.key}_date`] : m.defaultDate}
+                          onChange={(e) => updateSectionField("about", `${m.key}_date`, e.target.value)}
+                          placeholder={m.defaultDate}
+                          className="w-full px-2.5 py-1.5 text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-md focus:outline-none focus:border-indigo-500"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* The 2 Stat Highlight Boxes Below Milestones */}
+              <div className="md:col-span-2 p-5 rounded-2xl bg-amber-50/40 border border-amber-200/80 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-amber-950 font-bold text-xs uppercase tracking-wider">
+                    <Sparkles className="w-4 h-4 text-amber-600" />
+                    <span>The 2 Highlight Stat Boxes (Below Milestones)</span>
+                  </div>
+                  <span className="text-[10px] text-amber-800 font-semibold bg-white px-2 py-0.5 rounded border border-amber-200">
+                    2 Highlight Boxes
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Box 1 */}
+                  <div className="p-4 rounded-xl bg-white border border-amber-200/80 shadow-2xs space-y-2">
+                    <span className="text-xs font-bold text-slate-800 block">Box 1 (Left Highlight Box)</span>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-slate-500">Stat / Number</label>
+                      <input
+                        type="text"
+                        value={sec.fields?.stat1Number !== undefined ? sec.fields.stat1Number : "4"}
+                        onChange={(e) => updateSectionField("about", "stat1Number", e.target.value)}
+                        placeholder="4"
+                        className="w-full px-3 py-1.5 text-base font-extrabold text-indigo-950 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-slate-500">Label (Uppercase Subtext)</label>
+                      <input
+                        type="text"
+                        value={sec.fields?.stat1Label !== undefined ? sec.fields.stat1Label : "RESEARCH TRACKS"}
+                        onChange={(e) => updateSectionField("about", "stat1Label", e.target.value)}
+                        placeholder="RESEARCH TRACKS"
+                        className="w-full px-3 py-1.5 text-xs font-bold uppercase text-slate-700 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Box 2 */}
+                  <div className="p-4 rounded-xl bg-white border border-amber-200/80 shadow-2xs space-y-2">
+                    <span className="text-xs font-bold text-slate-800 block">Box 2 (Right Highlight Box)</span>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-slate-500">Stat / Number</label>
+                      <input
+                        type="text"
+                        value={sec.fields?.stat2Number !== undefined ? sec.fields.stat2Number : "4+"}
+                        onChange={(e) => updateSectionField("about", "stat2Number", e.target.value)}
+                        placeholder="4+"
+                        className="w-full px-3 py-1.5 text-base font-extrabold text-indigo-950 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-slate-500">Label (Uppercase Subtext)</label>
+                      <input
+                        type="text"
+                        value={sec.fields?.stat2Label !== undefined ? sec.fields.stat2Label : "KEYNOTE SPEAKERS"}
+                        onChange={(e) => updateSectionField("about", "stat2Label", e.target.value)}
+                        placeholder="KEYNOTE SPEAKERS"
+                        className="w-full px-3 py-1.5 text-xs font-bold uppercase text-slate-700 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-indigo-600"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
