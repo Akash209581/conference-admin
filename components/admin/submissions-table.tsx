@@ -116,7 +116,7 @@ export function SubmissionsTable({ submissions: initialData, conferenceSlug }: S
       const res = await safeFetchJson(`/conference-admin/api/admin/submissions/status`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ submissionId, status: newStatus })
+        body: JSON.stringify({ submissionId, status: newStatus, slug: conferenceSlug })
       });
 
       if (!res.ok) {

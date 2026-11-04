@@ -1,7 +1,8 @@
+import {adminGuard} from '@/lib/admin-guard';
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/client";
 
-export async function POST(request: Request) {
+export async function POST(request: Request) {const denied=await adminGuard();if(denied)return denied;
   try {
     const body = await request.json();
     const { name, slug, fullName, description, startDate, endDate, mode, venueName, venueCity } = body;

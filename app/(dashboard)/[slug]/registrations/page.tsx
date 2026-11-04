@@ -80,11 +80,11 @@ export default async function RegistrationsPage({
   // Add DB registrations
   for (const r of dbRegistrations) {
     const prof = r.user?.profile;
-    const org = prof?.organization?.name || "Independent";
-    const country = prof?.country?.name || "N/A";
-    const phone = prof?.phone || "N/A";
-    const currency = r.registrationPackage?.currency || "EUR";
-    const priceCents = r.registrationPackage?.priceCents || 0;
+    const org = r.organization || prof?.organization?.name || "Independent";
+    const country = r.countryName || prof?.country?.name || "N/A";
+    const phone = r.phone || prof?.phone || "N/A";
+    const currency = (r.referenceNumber ? r.currency : r.registrationPackage?.currency) || r.currency || "EUR";
+    const priceCents = r.referenceNumber ? r.registrationFeeCents : r.registrationPackage?.priceCents || 0;
     const regAmount = Math.round(priceCents / 100);
     const currencyAndRegAmount = formatAmt(priceCents, currency);
     const address = (r as any).billingAddress || (r as any).address || "N/A";

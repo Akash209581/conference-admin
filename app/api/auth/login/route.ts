@@ -1,47 +1,62 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-
-export async function POST(req: Request) {
+import { timingSafeEqual, createHash } from "crypto";
+import { createSession } from "@/lib/session";
+const attempts = new Map<string, { count: number; until: number }>();
+const equal = (a: string, b: string) =>
+  timingSafeEqual(
+    createHash("sha256").update(a).digest(),
+    createHash("sha256").update(b).digest(),
+  );
+export async function POST(request: Request) {
   try {
-    const { email, password } = await req.json();
-
-    const validEmail = process.env.ADMIN_EMAIL;
-    const validPassword = process.env.ADMIN_PASSWORD;
-    const sessionSecret = process.env.ADMIN_SESSION_SECRET || "authenticated_super_admin_session_key";
-
-    if (!validEmail || !validPassword) {
+    const secret = process.env.ADMIN_SESSION_SECRET,
+      email = process.env.ADMIN_EMAIL,
+      password = process.env.ADMIN_PASSWORD;
+    if (!secret || secret.length < 32 || !email || !password)
       return NextResponse.json(
-        { success: false, error: "ADMIN_EMAIL and ADMIN_PASSWORD must be configured in .env on the server." },
-        { status: 500 }
+        {
+          error:
+            "Configure admin credentials and an ADMIN_SESSION_SECRET of at least 32 characters.",
+        },
+        { status: 503 },
       );
-    }
-
+    const now = Date.now();
+    for (const [key, value] of attempts)
+      if (value.until < now) attempts.delete(key);
+    const key = "login";
+    const attempt = attempts.get(key) || { count: 0, until: now + 60000 };
+    if (attempt.count >= 10)
+      return NextResponse.json(
+        { error: "Too many login attempts. Try again shortly." },
+        { status: 429 },
+      );
+    attempt.count++;
+    attempts.set(key, attempt);
+    const body = await request.json();
     if (
-      email &&
-      password &&
-      email.trim().toLowerCase() === validEmail.trim().toLowerCase() &&
-      password === validPassword
-    ) {
-      const cookieStore = await cookies();
-      cookieStore.set("admin_session", sessionSecret, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7 // 7 days
-      });
-
-      return NextResponse.json({ success: true, message: "Login successful" });
-    }
-
+      typeof body.email !== "string" ||
+      typeof body.password !== "string" ||
+      !equal(body.email.trim().toLowerCase(), email.trim().toLowerCase()) ||
+      !equal(body.password, password)
+    )
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 },
+      );
+    attempts.delete(key);
+    (await cookies()).set("admin_session", await createSession(secret), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 8 * 60 * 60,
+    });
+    return NextResponse.json({ success: true });
+  } catch {
     return NextResponse.json(
-      { success: false, error: "Invalid email or password" },
-      { status: 401 }
-    );
-  } catch (err) {
-    return NextResponse.json(
-      { success: false, error: "Authentication server error" },
-      { status: 500 }
+      { error: "Authentication failed" },
+      { status: 400 },
     );
   }
 }

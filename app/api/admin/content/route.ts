@@ -1,9 +1,10 @@
+import {adminGuard} from '@/lib/admin-guard';
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/client";
 import fs from "fs";
 import path from "path";
 
-export async function POST(request: Request) {
+export async function POST(request: Request) {const denied=await adminGuard();if(denied)return denied;
   try {
     const {
       conferenceId,
@@ -24,9 +25,10 @@ export async function POST(request: Request) {
     let isDbSuccess = false;
 
     try {
+      await prisma.$transaction(async (tx) => {
       if (!targetConfId && slug) {
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-        const conf = await prisma.conference.findFirst({
+        const conf = await tx.conference.findFirst({
           where: isUUID
             ? { OR: [{ id: slug }, { slug: { equals: slug, mode: "insensitive" } }], deletedAt: null }
             : { slug: { equals: slug, mode: "insensitive" }, deletedAt: null }
@@ -37,7 +39,7 @@ export async function POST(request: Request) {
       if (targetConfId) {
         // Save page_content_home setting (all sections array with visibility and fields)
         if (sections) {
-          await prisma.systemSetting.upsert({
+          await tx.systemSetting.upsert({
             where: {
               conferenceId_key: {
                 conferenceId: targetConfId,
@@ -215,7 +217,7 @@ export async function POST(request: Request) {
           });
 
           // Update active theme tokens
-          const activeTheme = await prisma.themeSetting.findFirst({
+          const activeTheme = await tx.themeSetting.findFirst({
             where: { conferenceId: targetConfId, isActive: true }
           });
           if (activeTheme) {
@@ -235,7 +237,7 @@ export async function POST(request: Request) {
 
         // Create Audit Log
         try {
-          await prisma.auditLog.create({
+          await tx.auditLog.create({
             data: {
               action: "content.updated",
               entity: "SystemSetting",
@@ -257,11 +259,14 @@ export async function POST(request: Request) {
 
         isDbSuccess = true;
       }
+      });
     } catch (dbErr) {
       console.warn("DB offline or issue during content save:", dbErr);
+      return NextResponse.json({error:"Database save failed. Changes were not published."},{status:503});
     }
 
-    // Always persist to local settings files (and sync to mainweb)
+    if(!isDbSuccess)return NextResponse.json({error:"Conference not found"},{status:404});
+    // Maintain the existing local website mirror after a successful database write.
     try {
       const syncTargets = [
         path.join(process.cwd(), "storage", "settings.json"),
@@ -331,7 +336,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      persisted: { db: isDbSuccess, file: true },
+      persisted: { db: isDbSuccess, file: false },
       message: "All navigation, committee, tracks, pricing, policies & website content updated successfully!"
     });
   } catch (error: any) {

@@ -1,16 +1,28 @@
+import {backupAbstracts} from '@/lib/backup-abstracts';
+import {resolveConference} from '@/lib/portal-settings';
+import {adminGuard} from '@/lib/admin-guard';
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma/client";
 
-export async function POST(request: Request) {
+export async function POST(request: Request) {const denied=await adminGuard();if(denied)return denied;
   try {
-    const { submissionId, status } = await request.json();
+    const { submissionId, status, slug } = await request.json();
 
     if (!submissionId || !status) {
       return NextResponse.json({ error: "Missing submissionId or status" }, { status: 400 });
     }
 
+    if(!['DRAFT','SUBMITTED','UNDER_REVIEW','ACCEPTED','REJECTED','REVISION_REQUIRED'].includes(status))return NextResponse.json({error:'Invalid status'},{status:400});
+    if(typeof slug!=='string')return NextResponse.json({error:'Conference is required'},{status:400});
+    const conference=await resolveConference(slug);
+    if((await backupAbstracts(slug)).some(b=>b.id===submissionId)){
+      const key='record_workflow:backup:'+submissionId;
+      const labels:Record<string,string>={DRAFT:'New',SUBMITTED:'New',UNDER_REVIEW:'Under review',ACCEPTED:'Accepted',REJECTED:'Rejected',REVISION_REQUIRED:'Under review'};
+      await prisma.$transaction(async tx=>{const existing=await tx.systemSetting.findUnique({where:{conferenceId_key:{conferenceId:conference.id,key}}});const value={...((existing?.value as Record<string,any>)||{}),status:labels[status],submissionStatus:status};await tx.systemSetting.upsert({where:{conferenceId_key:{conferenceId:conference.id,key}},create:{conferenceId:conference.id,key,value},update:{value}});await tx.auditLog.create({data:{action:'portal.record.updated',entity:'backup',entityId:submissionId,metadata:{conferenceId:conference.id,status}}})});
+      return NextResponse.json({success:true});
+    }
     const updated = await prisma.abstractSubmission.update({
-      where: { id: submissionId },
+      where: { id: submissionId, conferenceId: conference.id, deletedAt: null },
       data: { status: status as any }
     });
 

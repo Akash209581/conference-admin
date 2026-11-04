@@ -143,6 +143,7 @@ export default async function SubmissionsPage({
     }
   }
 
+  if(conference?.id){try{const rows=await prisma.systemSetting.findMany({where:{conferenceId:conference.id,key:{startsWith:'record_workflow:backup:'}}});const mapping:Record<string,string>={'New':'SUBMITTED','Under review':'UNDER_REVIEW','Accepted':'ACCEPTED','Rejected':'REJECTED'};for(const row of rows){const item=mergedMap.get(row.key.slice('record_workflow:backup:'.length));const value=row.value as any;if(item)item.status=value.submissionStatus||mapping[value.status]||item.status}}catch{}}
   // Format and assign 1-based sequential S.No
   const formattedSubmissions: FormattedSubmission[] = Array.from(mergedMap.values()).map(
     (item, index) => ({
