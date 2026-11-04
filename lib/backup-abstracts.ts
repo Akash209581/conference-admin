@@ -22,7 +22,9 @@ export async function backupAbstracts(slug: string): Promise<any[]> {
           if (typeof row.id === "string" && !rows.has(row.id))
             rows.set(row.id, row);
     } catch (e: any) {
-      if (e.code !== "ENOENT") throw Error("Unable to read abstract backup");
+      if (e.code !== "ENOENT") {
+        console.warn("[Backup abstracts] Failed reading:", file, e.message);
+      }
     }
   }
   return [...rows.values()];
@@ -50,7 +52,9 @@ export async function backupRegistrations(slug: string): Promise<any[]> {
           if (typeof row.id === "string" && !rows.has(row.id))
             rows.set(row.id, row);
     } catch (e: any) {
-      if (e.code !== "ENOENT") throw Error("Unable to read registration backup");
+      if (e.code !== "ENOENT") {
+        console.warn("[Backup registrations] Failed reading:", file, e.message);
+      }
     }
   }
   return [...rows.values()];

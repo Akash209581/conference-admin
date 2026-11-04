@@ -129,9 +129,13 @@ export async function GET(_: Request, { params }: Context) {
       { records },
       { headers: { "Cache-Control": "private, no-store" } },
     );
-  } catch {
+  } catch (err: any) {
+    console.error("[Records API GET Error]:", err);
     return NextResponse.json(
-      { error: "Unable to load records from the shared database." },
+      {
+        error: "Unable to load records from the shared database.",
+        details: err?.message || String(err),
+      },
       { status: 503 },
     );
   }
