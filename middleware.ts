@@ -1,17 +1,27 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { validSession } from "@/lib/session";
+import { isValidOrigin } from "@/lib/origin";
+
 export async function middleware(request: NextRequest) {
   const pathname =
     request.nextUrl.pathname.replace(/^\/conference-admin(?=\/|$)/, "") || "/";
   const api = pathname.startsWith("/api/");
   if (api && !["GET", "HEAD", "OPTIONS"].includes(request.method)) {
     const origin = request.headers.get("origin");
-    const expected = process.env.ADMIN_ORIGIN || request.nextUrl.origin;
-    if (origin !== expected)
+    const host =
+      request.headers.get("x-forwarded-host") ||
+      request.headers.get("host") ||
+      request.nextUrl.host;
+    const proto =
+      request.headers.get("x-forwarded-proto") ||
+      request.nextUrl.protocol.replace(":", "");
+
+    if (!isValidOrigin(origin, host, proto, request.nextUrl.origin)) {
       return NextResponse.json(
         { error: "Invalid request origin" },
         { status: 403 },
       );
+    }
   }
   if (
     pathname === "/login" ||
