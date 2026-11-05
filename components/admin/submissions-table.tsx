@@ -42,6 +42,7 @@ export interface FormattedSubmission {
   presentationPreference?: string;
   coAuthors?: Array<{ name: string; affiliation: string }>;
   createdAt: string;
+  downloadUrl?: string;
 }
 
 interface SubmissionsTableProps {
@@ -138,6 +139,7 @@ export function SubmissionsTable({ submissions: initialData, conferenceSlug }: S
    * Generates a research abstract text document and triggers download
    */
   const downloadSingleAbstract = (sub: FormattedSubmission) => {
+    if(sub.downloadUrl){const a=document.createElement('a');a.href=sub.downloadUrl;document.body.appendChild(a);a.click();a.remove();return;}
     const content = `================================================================================
 HANSCI NOVUM / ICGIT 2026 — SCIENTIFIC ABSTRACT SUBMISSION
 Reference ID: ${sub.id}
@@ -189,7 +191,7 @@ International Conference on Global Innovation & Technology (ICGIT 2026)
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    toast.success(`Abstract document downloaded for ${sub.name}`, "Download Successful");
+    toast.success(`Submission summary downloaded for ${sub.name}`, "Download Successful");
   };
 
   /**

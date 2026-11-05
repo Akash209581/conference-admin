@@ -3,6 +3,7 @@ import { usePathname, useParams } from "next/navigation";
 import { AdminSidebar } from "./admin-sidebar";
 import { AdminHeader } from "./admin-header";
 import "@/components/reference/style.css";
+import "./reference-theme.css";
 export function LegacyShell({
   children,
   conferences,

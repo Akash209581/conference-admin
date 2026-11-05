@@ -39,7 +39,7 @@ export default async function ConferenceDashboardPage({
 
   const totalSpeakers = conference?.speakers?.length || 0;
 
-  const [totalSubmissions, totalRegistrations, totalPaymentRevenue] = await Promise.all([
+  const [legacySubmissions, totalRegistrations, totalPaymentRevenue] = await Promise.all([
     prisma.abstractSubmission.count({
       where: { conferenceId: conference?.id, deletedAt: null }
     }),
@@ -75,6 +75,8 @@ export default async function ConferenceDashboardPage({
       deletedAt: null
     }
   });
+
+  const totalSubmissions=legacySubmissions+await prisma.publicAbstractSubmission.count({where:{conferenceId:conference?.id}});
 
   return (
     <div className="space-y-8">

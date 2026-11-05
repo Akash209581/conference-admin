@@ -37,6 +37,7 @@ export async function POST(request: Request) {
     if (
       typeof body.email !== "string" ||
       typeof body.password !== "string" ||
+      body.email.length > 180 || body.password.length > 1024 ||
       !equal(body.email.trim().toLowerCase(), email.trim().toLowerCase()) ||
       !equal(body.password, password)
     )

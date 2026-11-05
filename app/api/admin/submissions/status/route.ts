@@ -21,6 +21,8 @@ export async function POST(request: Request) {const denied=await adminGuard();if
       await prisma.$transaction(async tx=>{const existing=await tx.systemSetting.findUnique({where:{conferenceId_key:{conferenceId:conference.id,key}}});const value={...((existing?.value as Record<string,any>)||{}),status:labels[status],submissionStatus:status};await tx.systemSetting.upsert({where:{conferenceId_key:{conferenceId:conference.id,key}},create:{conferenceId:conference.id,key,value},update:{value}});await tx.auditLog.create({data:{action:'portal.record.updated',entity:'backup',entityId:submissionId,metadata:{conferenceId:conference.id,status}}})});
       return NextResponse.json({success:true});
     }
+    const publicSubmission=await prisma.publicAbstractSubmission.findFirst({where:{id:submissionId,conferenceId:conference.id},select:{id:true}});
+    if(publicSubmission){await prisma.$transaction(async tx=>{await tx.publicAbstractSubmission.update({where:{id:submissionId},data:{status}});await tx.auditLog.create({data:{action:'portal.record.updated',entity:'PublicAbstractSubmission',entityId:submissionId,metadata:{status,conferenceId:conference.id}}})});return NextResponse.json({success:true})}
     const updated = await prisma.abstractSubmission.update({
       where: { id: submissionId, conferenceId: conference.id, deletedAt: null },
       data: { status: status as any }

@@ -1,0 +1,21 @@
+/* Reference portal palette. Exact utility tokens keep pale panels and primary actions distinct. */
+.legacy-portal .workspace { color:#18314a; background:#f4f6f9; font-family:Arial,sans-serif; }
+.legacy-portal .workspace :is(input,textarea,select) { color:#24405a; background-color:#fff; border-color:#d9e2eb; border-radius:5px; box-shadow:none; }
+.legacy-portal .workspace :is(input,textarea)::placeholder { color:#718198; }
+.legacy-portal .workspace :is(button,a,label)[class~="text-white"] { color:#fff; }
+.legacy-portal .workspace :is([class~="text-indigo-500"],[class~="text-indigo-600"],[class~="text-indigo-700"],[class~="text-violet-600"]):not([class~="text-white"]) { color:#29465f; }
+.legacy-portal .workspace :is([class~="bg-indigo-50"],[class~="bg-indigo-50/40"],[class~="bg-indigo-50/50"],[class~="bg-indigo-50/60"],[class~="bg-indigo-50/70"],[class~="bg-indigo-100"],[class~="bg-violet-50"]) { background-color:#edf3f8; }
+.legacy-portal .workspace :is([class~="border-indigo-100"],[class~="border-indigo-100/80"],[class~="border-indigo-200"],[class~="border-indigo-200/80"],[class~="border-violet-100"]) { border-color:#dce4ed; }
+.legacy-portal .workspace :is([class~="bg-indigo-500"],[class~="bg-indigo-600"],[class~="bg-indigo-700"],[class~="bg-violet-600"]) { background-color:#173955; color:#fff; border-color:#173955; }
+.legacy-portal .workspace :is([class~="bg-indigo-500"],[class~="bg-indigo-600"],[class~="bg-indigo-700"]) :is(span,svg) { color:inherit; }
+.legacy-portal .workspace :is([class~="hover:bg-indigo-50"],[class~="hover:bg-indigo-100"]):hover { background-color:#edf3f8; color:#29465f; }
+.legacy-portal .workspace :is([class~="hover:bg-indigo-500"],[class~="hover:bg-indigo-600"]):hover { background-color:#26445f; color:#fff; }
+.legacy-portal .workspace :is([class~="bg-gradient-to-tr"],[class~="bg-gradient-to-r"]) { background-image:none; background-color:#173955; color:#fff; }
+.legacy-portal .workspace [class~="bg-slate-900"] { background-color:#102d49; color:#fff; }
+.legacy-portal .workspace :is([class~="bg-slate-900"],[class~="bg-gradient-to-r"]) :is([class~="text-indigo-100"],[class~="text-indigo-200"],[class~="text-indigo-200/80"],[class~="text-slate-400"]) { color:#d6e0eb; }
+.legacy-portal .workspace [class*="shadow"] { box-shadow:none; }
+.legacy-portal .workspace button { border-radius:6px; }
+.legacy-portal .workspace :is(button,input,textarea,select):focus-visible { outline:2px solid #917243; outline-offset:3px; }
+.legacy-portal .workspace [class~="sticky"][class~="bottom-0"] { border-color:#e0e6ed; }
+.legacy-portal .workspace main>div>div>h1 { font-size:30px; font-weight:500; letter-spacing:-.7px; }
+.legacy-portal .workspace :is([class~="text-indigo-800"],[class~="text-indigo-900"],[class~="text-violet-700"],[class~="text-violet-800"]):not([class~="text-white"]) { color:#18314a; }

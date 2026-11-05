@@ -144,6 +144,7 @@ export default async function SubmissionsPage({
   }
 
   if(conference?.id){try{const rows=await prisma.systemSetting.findMany({where:{conferenceId:conference.id,key:{startsWith:'record_workflow:backup:'}}});const mapping:Record<string,string>={'New':'SUBMITTED','Under review':'UNDER_REVIEW','Accepted':'ACCEPTED','Rejected':'REJECTED'};for(const row of rows){const item=mergedMap.get(row.key.slice('record_workflow:backup:'.length));const value=row.value as any;if(item)item.status=value.submissionStatus||mapping[value.status]||item.status}}catch{}}
+  if(conference?.id){const submitted=await prisma.publicAbstractSubmission.findMany({where:{conferenceId:conference.id},select:{id:true,payload:true,status:true,fileName:true,sizeBytes:true,createdAt:true,referenceNumber:true}});for(const item of submitted){const p=item.payload as any;mergedMap.set(item.id,{id:item.id,name:p.first+' '+p.last,email:p.email,number:p.phone,institution:p.institution,country:p.country,title:p.title,track:p.track,fileName:item.fileName,fileSize:item.sizeBytes,status:item.status,coAuthors:p.coAuthors,presentationPreference:p.presentation,createdAt:item.createdAt.toISOString(),downloadUrl:'/conference-admin/api/portal/'+encodeURIComponent(slug)+'/files?id='+encodeURIComponent(item.id)})}}
   // Format and assign 1-based sequential S.No
   const formattedSubmissions: FormattedSubmission[] = Array.from(mergedMap.values()).map(
     (item, index) => ({

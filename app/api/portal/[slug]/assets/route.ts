@@ -1,3 +1,4 @@
+import { documentDownloadHeaders } from '@/lib/document-download';
 import { adminGuard } from "@/lib/admin-guard";
 import { readPortalSettings } from "@/lib/portal-settings";
 import fs from "fs/promises";
@@ -28,13 +29,7 @@ export async function GET(
       ),
     );
     return new Response(bytes, {
-      headers: {
-        "Content-Type": "application/octet-stream",
-        "Content-Disposition":
-          "attachment; filename*=UTF-8''" + encodeURIComponent(asset.fileName),
-        "X-Content-Type-Options": "nosniff",
-        "Cache-Control": "private, no-store",
-      },
+      headers: { ...documentDownloadHeaders(asset.fileName,asset.storageKey), "Cache-Control":"private, no-store" }
     });
   } catch {
     return new Response("File unavailable", { status: 404 });

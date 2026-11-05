@@ -46,9 +46,11 @@ export async function GET(_: Request, { params }: Context) {
     const meta = new Map(
       workflow.map((w) => [w.key.slice(16), w.value as any]),
     );
+    const publicAbstracts=await prisma.publicAbstractSubmission.findMany({where:{conferenceId:conference.id},select:{id:true,payload:true,status:true,createdAt:true,fileName:true,referenceNumber:true},orderBy:{createdAt:'desc'}});
     const backups = await backupAbstracts(slug);
     const registrationBackups=await backupRegistrations(slug);
     const records = [
+      ...publicAbstracts.map(a=>{const p=a.payload as any;return {id:'publicAbstract:'+a.id,kind:'abstract',name:p.first+' '+p.last,email:p.email,organisation:p.institution,phone:p.phone,status:submissionStatuses[a.status],created_at:a.createdAt,file_name:a.fileName,payload:{...p,referenceNumber:a.referenceNumber}}}),
       ...registrationBackups.filter(b=>!registrations.some(r=>r.id===b.id||(r.referenceNumber&&r.referenceNumber===b.referenceNumber))).map(b=>({id:'backreg:'+b.id,kind:'registration',name:b.fullName||b.name,email:b.email,organisation:b.organization||b.institution,phone:b.phone||b.number,status:meta.get('backreg:'+b.id)?.status||(b.status==='CONFIRMED'?'Confirmed':'New'),created_at:b.createdAt||b.submittedAt,payload:{...b,storageNotice:'Historical registration saved by the public fallback.'}})),
       ...backups
         .filter((b) => !abstracts.some((a) => a.id === b.id))
@@ -159,6 +161,7 @@ export async function PATCH(request: Request, { params }: Context) {
     const [kind, recordId] = id.split(":");
     const maps: Record<string, Record<string, string>> = {
       backreg: { New:"PENDING", Confirmed:"CONFIRMED", Rejected:"CANCELLED" },
+      publicAbstract:{New:'SUBMITTED','Under review':'UNDER_REVIEW',Accepted:'ACCEPTED',Rejected:'REJECTED'},
       registration: {
         New: "PENDING",
         Confirmed: "CONFIRMED",
@@ -189,7 +192,8 @@ export async function PATCH(request: Request, { params }: Context) {
         { status: 400 },
       );
     await prisma.$transaction(async (tx) => {
-      if (kind === "registration") {
+      if(kind==='publicAbstract'){const r=await tx.publicAbstractSubmission.updateMany({where:{id:recordId,conferenceId:conference.id},data:{status:maps[kind][status] as any}});if(r.count!==1)throw Error('Record not found');
+      }else if (kind === "registration") {
         const r = await tx.registration.updateMany({
           where: { id: recordId, conferenceId: conference.id, deletedAt: null },
           data: { status: maps[kind][status] as any },

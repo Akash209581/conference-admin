@@ -62,5 +62,5 @@ div[data-nextjs-dev-overlay-bubble] {
   pointer-events: none !important;
 }
 
-/* Shared reference palette for retained management screens. */
-.legacy-portal [class*="text-indigo-"]{color:#29465f}.legacy-portal [class*="bg-indigo-6"],.legacy-portal [class*="bg-indigo-5"]{background:#173955}.legacy-portal [class*="rounded-2xl"],.legacy-portal [class*="rounded-xl"]{border-radius:8px}.legacy-portal h1{font-size:30px;font-weight:500;letter-spacing:-.7px;color:#18314a}.legacy-portal .workspace>main{max-width:none}.legacy-portal .workspace>header{position:static;box-shadow:none;backdrop-filter:none;font-size:11px}.legacy-portal .sidebar a[aria-current="page"]{background:#26445f;color:white}body:has(.admin){font-family:Arial,sans-serif;color:#18314a}.admin :focus-visible{outline:2px solid #917243;outline-offset:3px}
+/* Retained screens use the reference theme without substring utility overrides. */
+.legacy-portal [class*="rounded-2xl"],.legacy-portal [class*="rounded-xl"]{border-radius:8px}.legacy-portal h1{font-size:30px;font-weight:500;letter-spacing:-.7px;color:#18314a}.legacy-portal .workspace>main{max-width:none}.legacy-portal .workspace>header{position:static;box-shadow:none;backdrop-filter:none;font-size:11px}.legacy-portal .sidebar a[aria-current="page"]{background:#26445f;color:white}body:has(.admin){font-family:Arial,sans-serif;color:#18314a}.admin :focus-visible{outline:2px solid #917243;outline-offset:3px}
