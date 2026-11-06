@@ -58,7 +58,10 @@ export function AdminSidebar({ slug }: { slug: string }) {
           {[
             ["content", "Website content & navigation"],
             ["settings", "Conference configuration"],
-            ["speakers", "Speakers"],
+            ["abstracts", "Abstracts page"],
+            ["speakers", "Speakers page"],
+            ["registration", "Registration page"],
+            ["committee", "Committee page"],
             ["media", "Media library"],
             ["seo", "SEO & metadata"],
             ["registrations", "Registration management"],

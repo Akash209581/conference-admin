@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import catalog from "@/lib/page-copy-catalog.json";
 import { portalFetch } from "@/lib/portal-fetch";
-export default function PageCopyEditor() {
-  const [page, setPage] = useState<keyof typeof catalog>("registration"),
+export default function PageCopyEditor({ fixedPage }: { fixedPage?: keyof typeof catalog } = {}) {
+  const [page, setPage] = useState<keyof typeof catalog>(fixedPage || "registration"),
     [values, setValues] = useState<Record<string, Record<string, string>>>({}),
     [version, setVersion] = useState(""),
     [search, setSearch] = useState(""),
@@ -65,7 +65,7 @@ export default function PageCopyEditor() {
       <div className="pageheading">
         <div>
           <div className="eyebrow">WEBSITE MANAGEMENT</div>
-          <h1>Public page text</h1>
+          <h1>{fixedPage ? `${fixedPage.charAt(0).toUpperCase() + fixedPage.slice(1)} page text` : "Public page text"}</h1>
           <p>
             Edit the reference page headings, descriptions, labels and notices.
           </p>
@@ -88,6 +88,7 @@ export default function PageCopyEditor() {
             Page
             <select
               value={page}
+              disabled={Boolean(fixedPage)}
               onChange={(e) => setPage(e.target.value as keyof typeof catalog)}
             >
               {Object.keys(catalog).map((k) => (
